@@ -107,14 +107,19 @@ class ReservationController extends Controller
     public function updatePackage(Request $request, $id)
     {
         $reservation = Reservation::findOrFail($id);
+        $packageOption = PackageOption::find($request->package_option);
 
-        if ($request->package_option == 'bachelor_party') {
-            return back()->withErrors(['package_option' => 'Bachelor party package is not suitable for children']);
+        $notSuitablePackages = ['bachelor_party', 'vrijgezellenfeest'];  // Voeg hier alle ongepaste pakketten toe
+
+        if (in_array($packageOption->name, $notSuitablePackages) && $reservation->person->isChild()) {
+            return back()->withErrors(['package_option' => 'Het optiepakket ' . $packageOption->name . ' is niet geschikt voor kinderen.']);
         }
 
-        $reservation->package_option_id = $request->package_option;
+        $reservation->package_option_id = $packageOption->id;
         $reservation->save();
 
-        return redirect()->route('reservations.index')->with('success', 'Package option updated');
+        return redirect()->route('reservations.index')->with('success', 'Het optiepakket is gewijzigd');
     }
+
+
 }

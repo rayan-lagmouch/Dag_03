@@ -4,10 +4,26 @@
     <div class="container mx-auto p-8">
         <h1 class="text-4xl font-semibold text-center mb-8 text-gray-800">Edit Package for Reservation #{{ $reservation->id }}</h1>
 
-        <form action="{{ route('reservations.update-package', $reservation->id) }}" method="POST" class="bg-white p-6 rounded-lg shadow-xl">
-            @csrf
-            @method('POST') <!-- Changed to POST, since we're updating a resource -->
+        <!-- Succes- en foutmelding -->
+        @if(session('success'))
+            <div class="bg-green-100 text-green-700 p-4 rounded-md shadow-md mb-6">
+                <p class="font-medium">{{ session('success') }}</p>
+            </div>
+        @elseif($errors->any())
+            <div class="bg-red-100 text-red-700 p-4 rounded-md shadow-md mb-6">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
+        <form action="{{ route('reservations.update-package', $reservation->id) }}" method="POST" class="bg-white p-8 rounded-lg shadow-xl">
+            @csrf
+            @method('POST')
+
+            <!-- Package Option Selection -->
             <div class="mb-6">
                 <label for="package_option" class="block text-lg font-medium text-gray-700">Select Package Option</label>
                 <select id="package_option" name="package_option" class="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
@@ -23,8 +39,11 @@
                 @enderror
             </div>
 
+            <!-- Submit Button -->
             <div class="flex justify-center mt-6">
-                <button type="submit" class="bg-green-500 text-white px-8 py-3 rounded-md shadow-md hover:bg-green-600 transition duration-200">Update Package</button>
+                <button type="submit" class="bg-green-500 text-white px-8 py-3 rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-200 ease-in-out">
+                    Update Package
+                </button>
             </div>
         </form>
     </div>
