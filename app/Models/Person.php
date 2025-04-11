@@ -27,6 +27,7 @@ class Person extends Model
         return $this->belongsTo(PersonType::class, 'person_type_id');
     }
 
+
     public function reservations()
     {
         return $this->hasMany(Reservation::class);

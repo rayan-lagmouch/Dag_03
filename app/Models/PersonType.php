@@ -17,6 +17,6 @@ class PersonType extends Model
     // Define a relationship to the Person model
     public function persons()
     {
-        return $this->hasMany(Person::class, 'type_id');
+        return $this->hasMany(Person::class);
     }
 }

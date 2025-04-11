@@ -17,11 +17,13 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
-            $table->string('nickname')->nullable();  // Make nickname nullable
+            $table->string('nickname');
             $table->boolean('is_adult')->default(true);
             $table->timestamps();
+
         });
     }
+
 
     /**
      * Reverse the migrations.
