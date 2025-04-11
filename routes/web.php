@@ -33,12 +33,31 @@ Route::middleware('auth')->get('/customers', [CustomerController::class, 'index'
  * CUSTOMER ROUTES
  */
 
+<<<<<<< HEAD
 Route::middleware('auth')->group(function () {
     // View personal reservations
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+=======
+Route::middleware(['auth', 'role:customer'])->group(function () {
+
+
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');    // View personal reservations
+
+
+    // Show the form to edit the lane (GET request)
+
+    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
+    Route::put('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update-lane');
+
+
+
+>>>>>>> 86efda1a5dbad7b9eefd5d0c680def90586fa6f8
     Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
+
+    // Store the new reservation
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
+<<<<<<< HEAD
     // Route in web.php
     Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.my');
 
@@ -47,9 +66,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
 
     // Update package
+=======
+    // View and update package option for reservation
+>>>>>>> 86efda1a5dbad7b9eefd5d0c680def90586fa6f8
     Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit.package');
     Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update.package');
+
+    // Route for showing reservation scores (assuming the score controller is set up)
+    Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.my');
 });
+
 
 /**
  * EMPLOYEE ROUTES

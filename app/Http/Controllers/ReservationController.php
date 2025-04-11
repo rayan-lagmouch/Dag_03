@@ -81,20 +81,52 @@ class ReservationController extends Controller
     // Lane editing
     public function editLane($id)
     {
-        $reservation = Reservation::findOrFail($id);
-        return view('reservations.edit-lane', compact('reservation'));
+        $reservation = Reservation::findOrFail($id); // Fetch reservation by ID
+        return view('reservations.edit-lane', compact('reservation')); // Pass the reservation to the view
     }
+
+
+    // app/Http/Controllers/ReservationController.php
 
     public function updateLane(Request $request, $id)
     {
-        $request->validate(['lane_number' => 'required|integer|in:7,8']);
+        // Log incoming data
+        \Log::info("Received request to update lane for reservation ID: $id");
+        \Log::info("Request Data: ", $request->all());
 
+        // Find the reservation
         $reservation = Reservation::findOrFail($id);
-        $reservation->lane_number = $request->lane_number;
+
+        // If the reservation has kids, enforce lane selection rule
+        if ($reservation->child_count > 0) {
+            $request->validate([
+                'lane_number' => 'required|integer|in:7,8', // Only lanes 7 and 8 are allowed if there are kids
+            ], [
+                'lane_number.in' => 'You can only select lane 7 or 8 if you have kids due to safety walls.',
+            ]);
+        } else {
+            // If there are no kids, allow any lane number between 1 and 8
+            $request->validate([
+                'lane_number' => 'required|integer|in:1,2,3,4,5,6,7,8',
+            ]);
+        }
+
+        // Update the lane number
+        $reservation->lane_id = $request->lane_number;
         $reservation->save();
 
-        return redirect()->route('reservations.index')->with('success', 'Lane number updated');
+        // Log successful update
+        \Log::info("Lane updated successfully for reservation ID: $id");
+
+        // Redirect with success message
+        return redirect()->route('reservations.index')->with('success', 'Lane updated successfully');
     }
+
+
+
+
+
+
 
     // Package editing
     public function editPackage($id)
