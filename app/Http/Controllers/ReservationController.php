@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Reservation;
+use App\Models\PackageOption;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ReservationController extends Controller
+{
+    public function index(Request $request)
+    {
+        if (Auth::user()->hasRole('customer')) {
+            $reservations = Reservation::where('person_id', Auth::id())
+                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+                ->orderBy('date', 'desc')
+                ->get();
+        } else {
+            $reservations = Reservation::where('status', 'confirmed')
+                ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
+                ->orderBy('date', 'desc')
+                ->get();
+        }
+
+        return view('reservations.index', compact('reservations'));
+    }
+
+    public function editLane($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        return view('reservations.edit-lane', compact('reservation'));
+    }
+
+    public function updateLane(Request $request, $id)
+    {
+        $request->validate(['lane_number' => 'required|integer|in:7,8']);
+
+        $reservation = Reservation::findOrFail($id);
+        $reservation->lane_number = $request->lane_number;
+        $reservation->save();
+
+        return redirect()->route('reservations.index')->with('success', 'Lane number updated');
+    }
+
+    public function editPackage($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $packages = PackageOption::all();
+        return view('reservations.edit-package', compact('reservation', 'packages'));
+    }
+
+    public function updatePackage(Request $request, $id)
+    {
+        $reservation = Reservation::findOrFail($id);
+
+        if ($request->package_option == 'bachelor_party') {
+            return back()->withErrors(['package_option' => 'Bachelor party package is not suitable for children']);
+        }
+
+        $reservation->package_option_id = $request->package_option;
+        $reservation->save();
+
+        return redirect()->route('reservations.index')->with('success', 'Package option updated');
+    }
+}
