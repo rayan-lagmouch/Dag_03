@@ -9,23 +9,72 @@ use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
-    public function index(Request $request)
+    // ✅ 1. For employees: show all confirmed reservations up to a selected date
+    public function confirmed(Request $request)
     {
-        if (Auth::user()->hasRole('customer')) {
-            $reservations = Reservation::where('person_id', Auth::id())
-                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-                ->orderBy('date', 'desc')
-                ->get();
-        } else {
-            $reservations = Reservation::where('status', 'confirmed')
-                ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
-                ->orderBy('date', 'desc')
-                ->get();
+        $query = Reservation::with(['person', 'packageOption', 'reservationStatus'])
+            ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'));
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('date', '<=', $request->to_date);
         }
 
-        return view('reservations.index', compact('reservations'));
+        $reservations = $query->orderBy('date', 'desc')->get();
+
+        return view('reservations.confirmed', [
+            'reservations' => $reservations,
+            'message' => $reservations->isEmpty()
+                ? 'Er is geen reserveringsinformatie beschikbaar voor deze geselecteerde datum'
+                : null,
+        ]);
     }
 
+    // ✅ 2. For customers: show personal reservations from selected date
+    public function index(Request $request)
+    {
+        $query = Reservation::where('person_id', Auth::id());
+
+        if ($request->filled('from_date')) {
+            $query->whereDate('date', '>=', $request->from_date);
+        }
+
+        $reservations = $query->orderBy('date', 'desc')->get();
+
+        return view('reservations.index', [
+            'reservations' => $reservations,
+            'message' => $reservations->isEmpty()
+                ? 'Er is geen informatie over deze periode'
+                : null,
+        ]);
+    }
+
+    // Reservation creation
+    public function create()
+    {
+        $packages = PackageOption::all();
+        return view('reservations.create', compact('packages'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date|after_or_equal:today',
+            'lane_number' => 'required|integer|in:7,8',
+            'package_option' => 'required|exists:package_options,id',
+        ]);
+
+        Reservation::create([
+            'date' => $request->date,
+            'lane_number' => $request->lane_number,
+            'package_option_id' => $request->package_option,
+            'person_id' => Auth::id(),
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
+    }
+
+    // Lane editing
     public function editLane($id)
     {
         $reservation = Reservation::findOrFail($id);
@@ -43,6 +92,7 @@ class ReservationController extends Controller
         return redirect()->route('reservations.index')->with('success', 'Lane number updated');
     }
 
+    // Package editing
     public function editPackage($id)
     {
         $reservation = Reservation::findOrFail($id);
@@ -54,7 +104,7 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::findOrFail($id);
 
-        if ($request->package_option == 'bachelor_party') {
+        if ($request->package_option === 'bachelor_party') {
             return back()->withErrors(['package_option' => 'Bachelor party package is not suitable for children']);
         }
 
@@ -63,35 +113,4 @@ class ReservationController extends Controller
 
         return redirect()->route('reservations.index')->with('success', 'Package option updated');
     }
-
-    // app/Http/Controllers/ReservationController.php
-
-    public function create()
-    {
-        $packages = PackageOption::all(); // Fetch all package options for the dropdown
-        return view('reservations.create', compact('packages'));
-    }
-
-    public function store(Request $request)
-    {
-        // Validate the incoming request
-        $request->validate([
-            'date' => 'required|date|after_or_equal:today', // Ensure the date is today or later
-            'lane_number' => 'required|integer|in:7,8',
-            'package_option' => 'required|exists:package_options,id',
-        ]);
-
-        // Create the reservation in the database
-        Reservation::create([
-            'date' => $request->date,
-            'lane_number' => $request->lane_number,
-            'package_option_id' => $request->package_option,
-            'person_id' => Auth::id(), // Automatically associate with the authenticated user
-            'status' => 'pending', // You can change the default status as needed
-        ]);
-
-        // Redirect back with a success message
-        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
-    }
-
 }
