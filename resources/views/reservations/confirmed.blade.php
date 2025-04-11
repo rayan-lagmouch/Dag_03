@@ -23,43 +23,37 @@
                 </form>
 
                 {{-- Show Reservations or Message --}}
-                @if($hasSearched)
-                    @if($reservations->count() > 0)
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-100">
+                @if($reservations->count() > 0)
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Customer Name</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Date</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Start Time</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">End Time</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Lane</th>
+                            <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Package</th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                        @foreach($reservations as $reservation)
                             <tr>
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Customer Name</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Date</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Start Time</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">End Time</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Lane</th>
-                                <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Package</th>
+                                <td class="px-4 py-2 text-sm text-gray-700">
+                                    {{ $reservation->person->first_name }} {{ $reservation->person->last_name }}
+                                </td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->date }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->start_time }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->end_time }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->lane_id }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->packageOption->name ?? 'None' }}</td>
                             </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-100">
-                            @foreach($reservations as $reservation)
-                                <tr>
-                                    <td class="px-4 py-2 text-sm text-gray-700">
-                                        {{ $reservation->person->first_name }} {{ $reservation->person->last_name }}
-                                    </td>
-                                    <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->date }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->start_time }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->end_time }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->lane_id }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->packageOption->name ?? 'None' }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    @elseif($selectedDate && $selectedDate < $validDate)
-                        <div class="text-red-600 text-md font-semibold mt-4">
-                            You have selected a date before the valid reservation date. Please select a later date.
-                        </div>
-                    @else
-                        <div class="text-red-600 text-md font-semibold mt-4">
-                            No reservation information available for the selected date.
-                        </div>
-                    @endif
+                        @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="text-red-600 text-md font-semibold mt-4">
+                        No reservation information available for the selected date.
+                    </div>
                 @endif
             </div>
         </div>
