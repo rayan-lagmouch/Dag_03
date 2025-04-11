@@ -9,14 +9,14 @@ class PersonType extends Model
 {
     use HasFactory;
 
-    // Table name if it's different from the plural of the model name
-    protected $table = 'person_types'; // Ensure this matches the table name in your database
+    // The table associated with the model.
+    protected $table = 'person_types';
 
-    protected $fillable = ['name']; // Assuming 'name' is the column describing the type, like 'Customer', 'Employee'
+    // The attributes that are mass assignable.
+    protected $fillable = [
+        'name', 'is_active'
+    ];
 
-    // Define a relationship to the Person model
-    public function persons()
-    {
-        return $this->hasMany(Person::class);
-    }
+    // If you want to disable the timestamps, you can add this:
+    // public $timestamps = false;
 }
