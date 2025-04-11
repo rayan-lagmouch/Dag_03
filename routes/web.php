@@ -27,14 +27,19 @@ Route::middleware('auth')->group(function () {
  * CUSTOMER ROUTES (Role: customer)
  */
 
-Route::middleware(['auth', 'role:customer'])->group(function () {
+
+
+ Route::get('reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.my');
+ Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
+
     // View personal reservations
-    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
     Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
-
-    // Route in web.php
-    Route::get('reservations//scores', [ScoreController::class, 'show'])->name('scores.my');
+    // Voor klanten (reservering -> scores bekijken)
+Route::get('/reservations/scores', [ScoreController::class, 'show'])
+->middleware(['auth', 'role:customer'])
+->name('scores.show');
 
 
     // Update lane
@@ -44,7 +49,6 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Update package
     Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit.package');
     Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update.package');
-});
 
 /**
  * EMPLOYEE ROUTES (Role: employee)

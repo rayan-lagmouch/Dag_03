@@ -11,17 +11,12 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
-        if (Auth::user()->hasRole('customer')) {
-            $reservations = Reservation::where('person_id', Auth::id())
-                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-                ->orderBy('date', 'desc')
-                ->get();
-        } else {
-            $reservations = Reservation::where('status', 'confirmed')
-                ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
-                ->orderBy('date', 'desc')
-                ->get();
-        }
+        $reservations = Reservation::where('person_id', Auth::id())
+        ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+        ->orderBy('date', 'desc')
+        ->get();    
+        
+       
 
         return view('reservations.index', compact('reservations'));
     }

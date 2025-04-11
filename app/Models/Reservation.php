@@ -31,4 +31,9 @@ class Reservation extends Model
     {
         return $this->belongsTo(PackageOption::class);
     }
+
+    public function games()
+{
+    return $this->hasMany(Game::class);
+}
 }

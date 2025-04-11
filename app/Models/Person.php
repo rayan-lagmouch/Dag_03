@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Person extends Model
 {
     use HasFactory;
+    
 
     protected $fillable = [
         'first_name',
@@ -33,4 +34,9 @@ class Person extends Model
     {
         return $this->hasOne(Contact::class);
     }
+    
+    public function games()
+{
+    return $this->hasMany(Game::class);
+}
 }

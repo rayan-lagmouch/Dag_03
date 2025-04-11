@@ -13,7 +13,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @role('customer')
                     <x-dashboard-link route="reservations.index" label="My Reservations" />
-                    <x-dashboard-link route="scores.my" label="View Scores" />
+                    <x-dashboard-link route="scores.show" label="View Scores" />
                     @endrole
 
                     @role('employee')
