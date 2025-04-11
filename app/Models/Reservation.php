@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Reservation extends Model
 {
@@ -14,21 +15,37 @@ class Reservation extends Model
         'date',
         'lane_number',
         'package_option_id',
-        'status', // For example: confirmed, pending, etc.
+        'status',
+        'opening_time_id',
+        'reservation_status_id',
     ];
+
+    // Cast 'date' to Carbon instance
+    protected $dates = ['date'];
 
     public function person()
     {
         return $this->belongsTo(Person::class);
     }
 
-    public function scores()
-    {
-        return $this->hasMany(Score::class);
-    }
+
 
     public function packageOption()
     {
         return $this->belongsTo(PackageOption::class);
+    }
+
+    public function lane()
+    {
+        return $this->belongsTo(Lane::class);
+    }
+    public function reservationStatus()
+    {
+        return $this->belongsTo(ReservationStatus::class);
+    }
+
+    public function openingTime()
+    {
+        return $this->belongsTo(OpeningTime::class);
     }
 }

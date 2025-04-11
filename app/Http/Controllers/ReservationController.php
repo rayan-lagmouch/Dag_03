@@ -4,20 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Reservation;
 use App\Models\PackageOption;
+use App\Models\Lane;
+use App\Models\OpeningTime;
+use App\Models\ReservationStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 class ReservationController extends Controller
 {
     public function index(Request $request)
     {
         if (Auth::user()->hasRole('customer')) {
-            $reservations = Reservation::where('person_id', Auth::id())
+            $reservations = Reservation::with('packageOption') // Eager load the related package options
+            ->where('person_id', Auth::id())
                 ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
                 ->orderBy('date', 'desc')
                 ->get();
         } else {
-            $reservations = Reservation::where('status', 'confirmed')
+            $reservations = Reservation::with('packageOption') // Eager load the related package options
+            ->where('status', 'confirmed')
                 ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
                 ->orderBy('date', 'desc')
                 ->get();
@@ -68,30 +72,50 @@ class ReservationController extends Controller
 
     public function create()
     {
-        $packages = PackageOption::all(); // Fetch all package options for the dropdown
-        return view('reservations.create', compact('packages'));
+        // Fetch the required data from the database
+        $packages = PackageOption::all(); // Fetch all package options
+        $lanes = Lane::where('is_active', true)->get(); // Fetch active lanes
+        $openingTimes = OpeningTime::where('is_active', true)->get(); // Fetch active opening times
+        $statuses = ReservationStatus::where('is_active', true)->get(); // Fetch active reservation statuses
+
+        // Pass data to the view
+        return view('reservations.create', compact('packages', 'lanes', 'openingTimes', 'statuses'));
     }
 
+    // Store the reservation
     public function store(Request $request)
     {
-        // Validate the incoming request
+        // Validate data
         $request->validate([
-            'date' => 'required|date|after_or_equal:today', // Ensure the date is today or later
-            'lane_number' => 'required|integer|in:7,8',
+            'date' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'adult_count' => 'required|integer|min:0',
+            'child_count' => 'nullable|integer|min:0',
             'package_option' => 'required|exists:package_options,id',
+            'lane_id' => 'required|exists:lanes,id',
+            'opening_time_id' => 'required|exists:opening_times,id',
+            'reservation_status_id' => 'required|exists:reservation_statuses,id',
         ]);
 
-        // Create the reservation in the database
+        // Create the reservation
         Reservation::create([
             'date' => $request->date,
-            'lane_number' => $request->lane_number,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'adult_count' => $request->adult_count,
+            'child_count' => $request->child_count,
             'package_option_id' => $request->package_option,
-            'person_id' => Auth::id(), // Automatically associate with the authenticated user
-            'status' => 'pending', // You can change the default status as needed
+            'lane_id' => $request->lane_id, // Storing lane_id now
+            'opening_time_id' => $request->opening_time_id,
+            'reservation_status_id' => $request->reservation_status_id,
+            'person_id' => Auth::id(),  // link to authenticated user
+            'status' => 'pending',  // set status as pending by default
         ]);
 
-        // Redirect back with a success message
-        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
+        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully');
     }
+
+
 
 }
