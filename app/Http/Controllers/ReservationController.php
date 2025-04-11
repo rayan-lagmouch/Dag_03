@@ -12,40 +12,52 @@ class ReservationController extends Controller
     // ✅ 1. For employees: show all confirmed reservations up to a selected date
     public function confirmed(Request $request)
     {
-        $query = Reservation::with(['person', 'packageOption', 'reservationStatus'])
-            ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'));
+        $reservations = collect(); // Empty by default
+        $toDate = $request->input('to_date');
+        $hasSearched = false;
+        $validDate = '2025-04-12'; // Replace with your "correct" date or dynamically set this
 
-        if ($request->filled('to_date')) {
-            $query->whereDate('date', '<=', $request->to_date);
+        if ($toDate) {
+            $hasSearched = true;
+
+            if ($toDate < $validDate) {
+                // If the selected date is before the valid date, return an empty collection and a message
+                $reservations = collect();
+            } else {
+                // If the selected date is valid or after the correct date
+                $reservations = Reservation::with(['person', 'packageOption', 'reservationStatus'])
+                    ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
+                    ->whereDate('date', '<=', $toDate)
+                    ->orderByDesc('date')
+                    ->get();
+            }
         }
-
-        $reservations = $query->orderBy('date', 'desc')->get();
 
         return view('reservations.confirmed', [
             'reservations' => $reservations,
-            'message' => $reservations->isEmpty()
-                ? 'Er is geen reserveringsinformatie beschikbaar voor deze geselecteerde datum'
-                : null,
+            'selectedDate' => $toDate,
+            'hasSearched' => $hasSearched,
+            'validDate' => $validDate, // Pass the valid date to Blade for later use if needed
         ]);
     }
+
 
     // ✅ 2. For customers: show personal reservations from selected date
     public function index(Request $request)
     {
-        $query = Reservation::where('person_id', Auth::id());
-
-        if ($request->filled('from_date')) {
-            $query->whereDate('date', '>=', $request->from_date);
+        if (Auth::user()->hasRole('customer')) {
+            $reservations = Reservation::where('person_id', Auth::id())
+                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+                ->orderBy('date', 'desc')
+                ->get();
+        } else {
+            $reservations = Reservation::whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
+                ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
+                ->orderBy('date', 'desc')
+                ->get();
         }
 
-        $reservations = $query->orderBy('date', 'desc')->get();
-
-        return view('reservations.index', [
-            'reservations' => $reservations,
-            'message' => $reservations->isEmpty()
-                ? 'Er is geen informatie over deze periode'
-                : null,
-        ]);
+        return view('reservations.index', compact('reservations'));
     }
 
     // Reservation creation
@@ -68,7 +80,7 @@ class ReservationController extends Controller
             'lane_number' => $request->lane_number,
             'package_option_id' => $request->package_option,
             'person_id' => Auth::id(),
-            'status' => 'pending',
+            'status' => 'pending', // Default
         ]);
 
         return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
@@ -104,7 +116,7 @@ class ReservationController extends Controller
     {
         $reservation = Reservation::findOrFail($id);
 
-        if ($request->package_option === 'bachelor_party') {
+        if ($request->package_option == 'bachelor_party') {
             return back()->withErrors(['package_option' => 'Bachelor party package is not suitable for children']);
         }
 

@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\PackageOption;
 use Illuminate\Database\Seeder;
+use App\Models\PackageOption;
 
 class PackageOptionSeeder extends Seeder
 {
     public function run()
     {
-        // Adding some example package options
-        PackageOption::create(['name' => 'Standard', 'is_active' => true]);
-        PackageOption::create(['name' => 'VIP', 'is_active' => true]);
-        PackageOption::create(['name' => 'Bachelor Party', 'is_active' => true]);
+        PackageOption::create(['name' => 'snackpacketbasis']);
+        PackageOption::create(['name' => 'snackpakketluxe']);
+        PackageOption::create(['name' => 'kinderpartij']);
+        PackageOption::create(['name' => 'vrijgezellenfeest']);
     }
 }

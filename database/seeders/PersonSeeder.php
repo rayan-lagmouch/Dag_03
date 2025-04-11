@@ -2,34 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\Person;
-use App\Models\PersonType;
 use Illuminate\Database\Seeder;
+use App\Models\Person;
 
 class PersonSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
-        // Assuming PersonType exists (e.g., Customer, Employee)
-        $customerType = PersonType::where('name', 'customer')->first();
-        $employeeType = PersonType::where('name', 'employee')->first();
-
-        // Create employee
+        // Example data for Person seeder
         Person::create([
-            'person_type_id' => $employeeType->id,
             'first_name' => 'John',
+            'middle_name' => 'Doe',  // You can set this as null if not required
             'last_name' => 'Doe',
-            'nickname' => 'JD',
-            'is_adult' => true,
+            'nickname' => 'Johnny',
+            'is_adult' => true,  // Adjust as necessary, defaults to true
+            'person_type_id' => 1,  // Ensure this refers to a valid 'person_types' ID
         ]);
 
-        // Create customer
-        Person::create([
-            'person_type_id' => $customerType->id,
-            'first_name' => 'Jane',
-            'last_name' => 'Smith',
-            'nickname' => 'JS',
-            'is_adult' => true,
-        ]);
+        // You can add more records as needed
     }
 }

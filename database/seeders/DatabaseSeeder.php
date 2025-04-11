@@ -13,10 +13,13 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            ReservationStatusSeeder::class,
+            PersonTypeSeeder::class,
             PersonSeeder::class,
-            PackageOptionSeeder::class,
-            ReservationSeeder::class,
+            PackageOptionSeeder::class, // Make sure this is before ReservationSeeder
+            LaneSeeder::class, // Make sure this is before ReservationSeeder
+            OpeningTimeSeeder::class, // Make sure this is before ReservationSeeder
+            ReservationStatusSeeder::class, // Make sure this is before ReservationSeeder
+            ReservationSeeder::class, // ReservationSeeder should run last
         ]);
     }
 }

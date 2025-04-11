@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ReservationStatus; // ✅ Add this line
+use Carbon\Carbon;
 
 class Reservation extends Model
 {
@@ -12,37 +12,40 @@ class Reservation extends Model
 
     protected $fillable = [
         'person_id',
-        'opening_time_id',
-        'lane_id',
-        'package_option_id',
-        'reservation_status_id',
         'date',
-        'start_time',
-        'end_time',
-        'adult_count',
-        'child_count',
-        'is_active',
+        'lane_number',
+        'package_option_id',
+        'status',
+        'opening_time_id',
+        'reservation_status_id',
     ];
+
+    // Cast 'date' to Carbon instance
+    protected $dates = ['date'];
 
     public function person()
     {
         return $this->belongsTo(Person::class);
     }
 
+
+
     public function packageOption()
     {
         return $this->belongsTo(PackageOption::class);
     }
 
+    public function lane()
+    {
+        return $this->belongsTo(Lane::class);
+    }
     public function reservationStatus()
     {
         return $this->belongsTo(ReservationStatus::class);
     }
 
-    public function scopeConfirmed($query)
+    public function openingTime()
     {
-        return $query->whereHas('reservationStatus', function ($q) {
-            $q->where('name', 'confirmed');
-        });
+        return $this->belongsTo(OpeningTime::class);
     }
 }

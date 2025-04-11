@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\ReservationStatus;
 use Illuminate\Database\Seeder;
+use App\Models\ReservationStatus;
 
 class ReservationStatusSeeder extends Seeder
 {
     public function run()
     {
-        // Adding some example statuses
-        ReservationStatus::create(['name' => 'confirmed', 'is_active' => true]);
-        ReservationStatus::create(['name' => 'pending', 'is_active' => true]);
+        ReservationStatus::create(['name' => 'pending']);
+        ReservationStatus::create(['name' => 'confirmed']);
+        ReservationStatus::create(['name' => 'canceled']);
     }
 }
