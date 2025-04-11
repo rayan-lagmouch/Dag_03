@@ -32,20 +32,38 @@ class ReservationController extends Controller
 
     public function editLane($id)
     {
-        $reservation = Reservation::findOrFail($id);
-        return view('reservations.edit-lane', compact('reservation'));
+        $reservation = Reservation::findOrFail($id); // Fetch reservation by ID
+        return view('reservations.edit-lane', compact('reservation')); // Pass the reservation to the view
     }
+
+
+    // app/Http/Controllers/ReservationController.php
 
     public function updateLane(Request $request, $id)
     {
-        $request->validate(['lane_number' => 'required|integer|in:7,8']);
+        // Log incoming data for debugging
+        \Log::info("Updating lane for reservation ID: $id with request data: " . json_encode($request->all()));
 
+        // Validate the request
+        $request->validate([
+            'lane_number' => 'required|integer|in:1,2,3,4,5,6,7,8',
+        ]);
+
+        // Find the reservation by ID
         $reservation = Reservation::findOrFail($id);
-        $reservation->lane_number = $request->lane_number;
+
+        // Update the lane
+        $reservation->lane_id = $request->lane_number;
         $reservation->save();
 
-        return redirect()->route('reservations.index')->with('success', 'Lane number updated');
+        // Log successful update
+        \Log::info("Lane updated successfully for reservation ID: $id");
+
+        // Redirect with success message
+        return redirect()->route('reservations.index')->with('success', 'Lane updated successfully');
     }
+
+
 
     public function editPackage($id)
     {
