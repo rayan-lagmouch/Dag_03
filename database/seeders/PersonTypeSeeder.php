@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\PersonType;
 
 class PersonTypeSeeder extends Seeder
 {
@@ -14,15 +14,17 @@ class PersonTypeSeeder extends Seeder
      */
     public function run()
     {
-        // Inserting default person types
-        DB::table('person_types')->insert([
-            'name' => 'Customer', // Change 'Customer' to whatever you want
-            'is_active' => true
+        // Insert default person types into person_types table
+        PersonType::create([
+            'name' => 'customer',
+            'is_active' => true,
         ]);
 
-        DB::table('person_types')->insert([
-            'name' => 'Employee', // Change 'Employee' to whatever you want
-            'is_active' => true
+        PersonType::create([
+            'name' => 'employee',
+            'is_active' => true,
         ]);
+
+        // Add more types if needed
     }
 }
