@@ -26,9 +26,12 @@ Route::middleware('auth')->group(function () {
 /**
  * CUSTOMER ROUTES (Role: customer)
  */
+
 Route::middleware(['auth', 'role:customer'])->group(function () {
     // View personal reservations
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
+    Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
     // Route in web.php
     Route::get('reservations//scores', [ScoreController::class, 'show'])->name('scores.my');
