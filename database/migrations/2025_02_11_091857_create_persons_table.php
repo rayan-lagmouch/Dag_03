@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('nickname');
             $table->boolean('is_adult')->default(true);
             $table->timestamps();
-            $table->boolean('is_active')->default(true);
+
         });
     }
 
