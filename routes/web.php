@@ -53,9 +53,19 @@ Route::middleware(['auth', 'role:employee'])->group(function () {
     // Confirmed reservations overview
     Route::get('/reservations/confirmed', [ReservationController::class, 'confirmed'])->name('reservations.confirmed');
 
+    Route::middleware(['auth', 'role:employee'])->group(function () {
+        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    });
+    
+
     // Customer personal data overview
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index')
+            ->middleware('role:employee');
+    });
+    
     // Contact info (edit email, etc.)
     Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('/contacts/{customer}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
