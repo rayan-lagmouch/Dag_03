@@ -12,34 +12,26 @@ class ReservationController extends Controller
     // ✅ 1. For employees: show all confirmed reservations up to a selected date
     public function confirmed(Request $request)
     {
-        $reservations = collect(); // Empty by default
+        // Get the selected date from the request
         $toDate = $request->input('to_date');
-        $hasSearched = false;
-        $validDate = '2025-04-12'; // Replace with your "correct" date or dynamically set this
+        $reservations = collect(); // Default empty collection
 
+        // Check if the user has selected a date
         if ($toDate) {
-            $hasSearched = true;
-
-            if ($toDate < $validDate) {
-                // If the selected date is before the valid date, return an empty collection and a message
-                $reservations = collect();
-            } else {
-                // If the selected date is valid or after the correct date
-                $reservations = Reservation::with(['person', 'packageOption', 'reservationStatus'])
-                    ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
-                    ->whereDate('date', '<=', $toDate)
-                    ->orderByDesc('date')
-                    ->get();
-            }
+            // Fetch only reservations for the exact selected date and confirmed status
+            $reservations = Reservation::with(['person', 'packageOption', 'reservationStatus'])
+                ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
+                ->whereDate('date', $toDate)  // Show reservations only for the selected date
+                ->orderByDesc('date') // Sort by date (descending order)
+                ->get();
         }
 
         return view('reservations.confirmed', [
             'reservations' => $reservations,
             'selectedDate' => $toDate,
-            'hasSearched' => $hasSearched,
-            'validDate' => $validDate, // Pass the valid date to Blade for later use if needed
         ]);
     }
+
 
 
     // ✅ 2. For customers: show personal reservations from selected date
