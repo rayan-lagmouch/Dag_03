@@ -1,51 +1,86 @@
-<!-- resources/views/reservations/create.blade.php -->
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mx-auto p-8">
-        <h1 class="text-4xl font-semibold text-center mb-8 text-gray-800">Create New Reservation</h1>
+    <div class="max-w-3xl mx-auto py-6">
+        <h1 class="text-2xl font-semibold text-center mb-6">Create Reservation</h1>
 
-        <form action="{{ route('reservations.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow-xl">
+        <form action="{{ route('reservations.store') }}" method="POST" class="bg-white shadow-lg rounded-lg p-6">
             @csrf
 
-            <!-- Date Picker -->
-            <div class="mb-6">
-                <label for="date" class="block text-lg font-medium text-gray-700">Reservation Date</label>
-                <input type="date" id="date" name="date" class="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" value="{{ old('date') }}">
-                @error('date')
-                <p class="text-red-500 mt-2 text-sm">{{ $message }}</p>
-                @enderror
+            <!-- Date -->
+            <div class="mb-4">
+                <label for="date" class="block text-gray-700">Date</label>
+                <input type="date" name="date" id="date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
             </div>
 
-            <!-- Lane Selection -->
-            <div class="mb-6">
-                <label for="lane_number" class="block text-lg font-medium text-gray-700">Select Lane Number</label>
-                <select id="lane_number" name="lane_number" class="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <option value="7" {{ old('lane_number') == 7 ? 'selected' : '' }}>Lane 7</option>
-                    <option value="8" {{ old('lane_number') == 8 ? 'selected' : '' }}>Lane 8</option>
+            <!-- Start Time -->
+            <div class="mb-4">
+                <label for="start_time" class="block text-gray-700">Start Time</label>
+                <input type="time" name="start_time" id="start_time" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+            </div>
+
+            <!-- End Time -->
+            <div class="mb-4">
+                <label for="end_time" class="block text-gray-700">End Time</label>
+                <input type="time" name="end_time" id="end_time" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+            </div>
+
+            <!-- Amount of Adults -->
+            <div class="mb-4">
+                <label for="adult_count" class="block text-gray-700">Amount of Adults</label>
+                <input type="number" name="adult_count" id="adult_count" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required min="1">
+            </div>
+
+            <!-- Amount of Kids -->
+            <div class="mb-4">
+                <label for="child_count" class="block text-gray-700">Amount of Kids</label>
+                <input type="number" name="child_count" id="child_count" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required min="0">
+            </div>
+
+            <!-- Package Option -->
+            <div class="mb-4">
+                <label for="package_option" class="block text-gray-700">Package Option</label>
+                <select name="package_option" id="package_option" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    <option value="snackpacketbasis">Snack Packet Basis</option>
+                    <option value="snackpakketluxe">Snack Packet Luxe</option>
+                    <option value="kinderpartij">Children's Party</option>
+                    <option value="vrijgezellenfeest">Bachelor Party</option>
                 </select>
-                @error('lane_number')
-                <p class="text-red-500 mt-2 text-sm">{{ $message }}</p>
-                @enderror
             </div>
 
-            <!-- Package Option Selection -->
-            <div class="mb-6">
-                <label for="package_option" class="block text-lg font-medium text-gray-700">Select Package Option</label>
-                <select id="package_option" name="package_option" class="mt-2 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <option value="" disabled {{ old('package_option') ? '' : 'selected' }}>Choose a package</option>
-                    @foreach($packages as $package)
-                        <option value="{{ $package->id }}" {{ old('package_option') == $package->id ? 'selected' : '' }}>{{ $package->name }}</option>
+            <!-- Lane Number -->
+            <div class="mb-4">
+                <label for="lane_id" class="block text-gray-700">Lane Number</label>
+                <select name="lane_id" id="lane_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    @foreach ($lanes as $lane)
+                        <option value="{{ $lane->id }}">{{ $lane->number }} (Has Fence: {{ $lane->has_fence ? 'Yes' : 'No' }})</option>
                     @endforeach
                 </select>
-                @error('package_option')
-                <p class="text-red-500 mt-2 text-sm">{{ $message }}</p>
-                @enderror
+            </div>
+
+            <!-- Opening Time -->
+            <div class="mb-4">
+                <label for="opening_time_id" class="block text-gray-700">Opening Time</label>
+                <select name="opening_time_id" id="opening_time_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    @foreach ($openingTimes as $openingTime)
+                        <option value="{{ $openingTime->id }}">{{ $openingTime->day_name }} - {{ $openingTime->start_time }} to {{ $openingTime->end_time }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Reservation Status -->
+            <div class="mb-4">
+                <label for="reservation_status_id" class="block text-gray-700">Reservation Status</label>
+                <select name="reservation_status_id" id="reservation_status_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                    @foreach ($statuses as $status)
+                        <option value="{{ $status->id }}">{{ $status->name }}</option>
+                    @endforeach
+                </select>
             </div>
 
             <!-- Submit Button -->
-            <div class="flex justify-center mt-6">
-                <button type="submit" class="bg-blue-500 text-white px-8 py-3 rounded-md shadow-md hover:bg-blue-600 transition duration-200">Create Reservation</button>
+            <div class="flex justify-center">
+                <button type="submit" class="bg-blue-500 text-white rounded-md py-2 px-6 mt-4 hover:bg-blue-600">Create Reservation</button>
             </div>
         </form>
     </div>

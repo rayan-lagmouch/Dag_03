@@ -12,7 +12,14 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UserSeeder::class,  // This now includes both roles and users
+            UserSeeder::class,
+            PersonTypeSeeder::class,
+            PersonSeeder::class,
+            PackageOptionSeeder::class, // Make sure this is before ReservationSeeder
+            LaneSeeder::class, // Make sure this is before ReservationSeeder
+            OpeningTimeSeeder::class, // Make sure this is before ReservationSeeder
+            ReservationStatusSeeder::class, // Make sure this is before ReservationSeeder
+            ReservationSeeder::class, // ReservationSeeder should run last
         ]);
     }
 }
