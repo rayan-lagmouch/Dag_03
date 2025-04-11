@@ -58,6 +58,21 @@
                             <td class="px-6 py-4">
                                 <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline">Baan wijzigen</a>
                             </td>
+                        <tr class="text-gray-600 reservation-row" data-reservation-date="{{ $reservation->date }}">
+                            <td class="py-2 px-4 border-b">{{ $reservation->person ? $reservation->person->first_name . ' ' . $reservation->person->last_name : 'No Name Found' }}</td>
+                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->date)->format('l, F j, Y') }}</td>
+                            <td class="py-2 px-4 border-b">{{ $reservation->lane ? $reservation->lane->number : 'No Lane Assigned' }}</td>
+                            <td class="py-2 px-4 border-b">{{ $reservation->packageOption ? $reservation->packageOption->name : 'None' }}</td>
+                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->start_time)->format('H:i') }}</td>
+                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->end_time)->format('H:i') }}</td>
+                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->start_time)->diffInHours(\Carbon\Carbon::parse($reservation->end_time)) }} hours</td>
+                            <td class="py-2 px-4 border-b">{{ $reservation->adult_count }}</td>
+                            <td class="py-2 px-4 border-b">{{ $reservation->child_count }}</td>
+                            <td class="py-2 px-4 border-b">
+                                <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700">Edit Lane</a>
+
+                            </td>
+
                         </tr>
                     @endforeach
                 </tbody>
