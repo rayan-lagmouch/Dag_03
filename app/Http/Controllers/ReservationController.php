@@ -63,4 +63,35 @@ class ReservationController extends Controller
 
         return redirect()->route('reservations.index')->with('success', 'Package option updated');
     }
+
+    // app/Http/Controllers/ReservationController.php
+
+    public function create()
+    {
+        $packages = PackageOption::all(); // Fetch all package options for the dropdown
+        return view('reservations.create', compact('packages'));
+    }
+
+    public function store(Request $request)
+    {
+        // Validate the incoming request
+        $request->validate([
+            'date' => 'required|date|after_or_equal:today', // Ensure the date is today or later
+            'lane_number' => 'required|integer|in:7,8',
+            'package_option' => 'required|exists:package_options,id',
+        ]);
+
+        // Create the reservation in the database
+        Reservation::create([
+            'date' => $request->date,
+            'lane_number' => $request->lane_number,
+            'package_option_id' => $request->package_option,
+            'person_id' => Auth::id(), // Automatically associate with the authenticated user
+            'status' => 'pending', // You can change the default status as needed
+        ]);
+
+        // Redirect back with a success message
+        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
+    }
+
 }
