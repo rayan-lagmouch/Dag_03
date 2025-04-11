@@ -69,6 +69,10 @@ Route::middleware(['auth', 'role:employee'])->group(function () {
     Route::get('/contacts/{customer}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
     Route::post('/contacts/{customer}/update', [ContactController::class, 'update'])->name('contacts.update');
 
+
+Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+
     // Edit Scores
     Route::get('/scores/editable', [ScoreController::class, 'editable'])->name('scores.editable');
     Route::get('/scores/{score}/edit', [ScoreController::class, 'edit'])->name('scores.edit');

@@ -13,29 +13,30 @@ class Person extends Model
 
     protected $fillable = [
         'first_name',
+        'middle_name',
         'last_name',
-        'email',
-        'phone',
-        'address',
-        'date_of_birth',
+        'nickname',
+        'is_adult',
+        'person_type_id',
     ];
 
-
-    // Relationship to the Reservation model (One-to-Many)
+    // Relationships
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
     }
 
-    // Relationship to the Contact model (One-to-One)
-    public function contact()
-    {
-        return $this->hasOne(Contact::class);
-    }
+// In Person.php model
+public function contact()
+{
+    return $this->hasOne(Contact::class);
+}
 
-    // Accessor for full name (optional)
+
+    // Full name accessor
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
     }
 }
+
