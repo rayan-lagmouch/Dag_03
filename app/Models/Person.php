@@ -18,14 +18,8 @@ class Person extends Model
         'phone',
         'address',
         'date_of_birth',
-        'person_type_id',
     ];
 
-    // Relationship to the PersonType model
-    public function type()
-    {
-        return $this->belongsTo(PersonType::class, 'person_type_id');
-    }
 
     // Relationship to the Reservation model (One-to-Many)
     public function reservations()

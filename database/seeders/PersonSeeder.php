@@ -2,24 +2,13 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-=======
 use Illuminate\Database\Seeder;
 use App\Models\Person;
->>>>>>> 29d7d07c4ba733f6f74d20e371becc578a2db6ce
 
 class PersonSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-<<<<<<< HEAD
-     */
-    public function run(): void
-    {
-        //
-=======
      *
      * @return void
      */
@@ -36,6 +25,5 @@ class PersonSeeder extends Seeder
         ]);
 
         // You can add more records as needed
->>>>>>> 29d7d07c4ba733f6f74d20e371becc578a2db6ce
     }
 }

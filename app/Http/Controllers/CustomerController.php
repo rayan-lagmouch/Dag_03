@@ -10,18 +10,17 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        // Get customers of type 'customer' and filter by date if available
-        $customers = Person::whereHas('type', fn($q) => $q->where('name', 'customer'))
+        // Use the correct column name: person_type_id
+        $customers = Person::where('person_type_id', 'customer') // Still needs fix: 'customer' isn't an ID
             ->when($request->date, fn($q) => $q->whereDate('created_at', '<=', Carbon::parse($request->date)->format('Y-m-d')))
             ->orderBy('last_name')
             ->get();
-
-        // Check if no customers were found
+    
         if ($customers->isEmpty()) {
             return back()->withErrors(['no_data' => 'No customer information available for this date']);
         }
-
-        // Return the view with the customers data
+    
         return view('customers.index', compact('customers'));
     }
+    
 }

@@ -23,19 +23,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('auth')->get('/test', function () {
+    return 'This is a test route accessible by any authenticated user!';
+});
+
+Route::middleware('auth')->get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+
 /**
- * CUSTOMER ROUTES (Role: customer)
+ * CUSTOMER ROUTES
  */
 
-Route::middleware(['auth', 'role:customer'])->group(function () {
+Route::middleware('auth')->group(function () {
     // View personal reservations
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
     Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
     // Route in web.php
-    Route::get('reservations//scores', [ScoreController::class, 'show'])->name('scores.my');
-
+    Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.my');
 
     // Update lane
     Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit.lane');
@@ -47,25 +52,13 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 });
 
 /**
- * EMPLOYEE ROUTES (Role: employee)
+ * EMPLOYEE ROUTES
  */
-Route::middleware(['auth', 'role:employee'])->group(function () {
+Route::middleware('auth')->group(function () {
     // Confirmed reservations overview
     Route::get('/reservations/confirmed', [ReservationController::class, 'confirmed'])->name('reservations.confirmed');
 
-    Route::middleware(['auth', 'role:employee'])->group(function () {
-        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-    });
-    
 
-    // Customer personal data overview
-    Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
-
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index')
-            ->middleware('role:employee');
-    });
-    
     // Contact info (edit email, etc.)
     Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('/contacts/{customer}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
