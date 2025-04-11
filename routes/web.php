@@ -46,8 +46,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
     // View and update package option for reservation
-    Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit.package');
-    Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update.package');
+    Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit-package');
+    Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update-package');
 
     // Route for showing reservation scores (assuming the score controller is set up)
     Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.my');
