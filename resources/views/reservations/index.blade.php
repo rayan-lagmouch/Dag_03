@@ -2,20 +2,25 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-10">
-    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">🎳 Mijn Reserveringen</h1>
 
-    <!-- Filter & Sorteer sectie -->
-    <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 gap-4">
-        <div class="flex items-center">
-            <label for="reservation-sort" class="mr-2 text-sm text-gray-600">Sorteer op datum:</label>
-            <select id="reservation-sort" class="border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-md shadow-sm">
-                <option value="desc" selected>Nieuwste eerst</option>
-                <option value="asc">Oudste eerst</option>
-            </select>
+    @if ($errors->has('score'))
+        <div class="bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500 p-4 mb-4">
+            ⚠️ {{ $errors->first('score') }}
         </div>
-        <button id="sort-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow">
-            Sorteer reserveringen
-        </button>
+    @endif
+
+    <!-- Filter op vanaf datum -->
+    <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 gap-4">
+        <div>
+            <label for="from_date" class="block text-sm text-gray-600">Toon reserveringen vanaf:</label>
+            <input type="date" id="from_date"
+                class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="mt-6 md:mt-0">
+            <button type="button" onclick="filterReservations()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow">
+                Toon reserveringen
+            </button>
+        </div>
     </div>
 
     @if ($reservations->isEmpty())
@@ -43,7 +48,7 @@
                             <td class="px-6 py-4">
                                 {{ $reservation->person ? $reservation->person->first_name . ' ' . $reservation->person->last_name : 'Geen naam' }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4" data-date="{{ \Carbon\Carbon::parse($reservation->date)->format('Y-m-d') }}">
                                 {{ \Carbon\Carbon::parse($reservation->date)->format('l d F Y') }}
                             </td>
                             <td class="px-6 py-4">{{ $reservation->lane->number ?? 'Niet toegewezen' }}</td>
@@ -55,23 +60,19 @@
                             </td>
                             <td class="px-6 py-4">{{ $reservation->adult_count }}</td>
                             <td class="px-6 py-4">{{ $reservation->child_count }}</td>
-                            <td class="px-6 py-4">
-                                <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline">Baan wijzigen</a>
-                            </td>
-                        <tr class="text-gray-600 reservation-row" data-reservation-date="{{ $reservation->date }}">
-                            <td class="py-2 px-4 border-b">{{ $reservation->person ? $reservation->person->first_name . ' ' . $reservation->person->last_name : 'No Name Found' }}</td>
-                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->date)->format('l, F j, Y') }}</td>
-                            <td class="py-2 px-4 border-b">{{ $reservation->lane ? $reservation->lane->number : 'No Lane Assigned' }}</td>
-                            <td class="py-2 px-4 border-b">{{ $reservation->packageOption ? $reservation->packageOption->name : 'None' }}</td>
-                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->start_time)->format('H:i') }}</td>
-                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->end_time)->format('H:i') }}</td>
-                            <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->start_time)->diffInHours(\Carbon\Carbon::parse($reservation->end_time)) }} hours</td>
-                            <td class="py-2 px-4 border-b">{{ $reservation->adult_count }}</td>
-                            <td class="py-2 px-4 border-b">{{ $reservation->child_count }}</td>
-                            <td class="py-2 px-4 border-b">
-                                <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700">Edit Lane</a>
+                            <td class="px-6 py-4 space-y-2">
+    <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline block">
+        Baan wijzigen
+    </a>
 
-                            </td>
+    <a href="{{ route('reservations.edit.package', $reservation->id) }}" class="text-purple-600 hover:text-purple-800 underline block">
+        Arrangement wijzigen
+    </a>
+
+    <a href="{{ route('scores.show', $reservation->id) }}" class="text-green-600 hover:text-green-800 underline block">
+        Bekijk Uitslagen
+    </a>
+</td>
 
                         </tr>
                     @endforeach
@@ -80,12 +81,7 @@
         </div>
     @endif
 
-    <!-- Geen reserveringen in geselecteerde periode -->
-    <div id="no-reservations-message" class="text-center text-gray-500 mt-6 hidden">
-        Geen reserveringen in deze periode.
-    </div>
-
-    <!-- Succes Pop-up -->
+    <!-- Pop-ups -->
     <div id="success-popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden">
         <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
             <h2 class="text-xl font-bold text-green-600 mb-2">✅ Gelukt!</h2>
@@ -94,7 +90,6 @@
         </div>
     </div>
 
-    <!-- Waarschuwing Pop-up -->
     <div id="warning-popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
             <h2 class="text-xl font-bold text-red-600 mb-2">⚠️ Let op!</h2>
@@ -123,6 +118,34 @@
         @if(session('success'))
             showSuccessPopup();
         @endif
+
+        function filterReservations() {
+            const fromDate = document.getElementById('from_date').value;
+            const rows = document.querySelectorAll('tbody tr');
+
+            if (!fromDate) {
+                rows.forEach(row => row.style.display = 'table-row');
+                return;
+            }
+
+            const selectedDate = new Date(fromDate);
+            selectedDate.setHours(0, 0, 0, 0);
+
+            rows.forEach(row => {
+                const cell = row.querySelector('td[data-date]');
+                if (!cell) return;
+
+                const rowDateStr = cell.getAttribute('data-date');
+                const rowDate = new Date(rowDateStr);
+                rowDate.setHours(0, 0, 0, 0);
+
+                if (rowDate >= selectedDate) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
     </script>
 </div>
 @endsection
