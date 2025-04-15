@@ -24,8 +24,8 @@ class ReservationController extends Controller
                 ->orderBy('date', $sortOrder)
                 ->get();
         } else {
-            $reservations = Reservation::with(['packageOption', 'lane', 'person', 'status'])
-                ->whereHas('status', fn($q) => $q->where('name', 'confirmed'))
+            $reservations = Reservation::with(['packageOption', 'lane', 'person', 'reservationStatus'])
+                ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
                 ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
                 ->orderBy('date', $sortOrder)
                 ->get();
@@ -41,8 +41,8 @@ class ReservationController extends Controller
         $reservations = collect();
 
         if ($toDate) {
-            $reservations = Reservation::with(['person', 'packageOption', 'status'])
-                ->whereHas('status', fn($q) => $q->where('name', 'confirmed'))
+            $reservations = Reservation::with(['person', 'packageOption', 'reservationStatus'])
+                ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
                 ->whereDate('date', $toDate)
                 ->orderByDesc('date')
                 ->get();
@@ -91,7 +91,7 @@ class ReservationController extends Controller
             'opening_time_id' => $request->opening_time_id,
             'reservation_status_id' => $request->reservation_status_id,
             'person_id' => Auth::id(),
-            'status' => 'pending',
+            'is_active' => true,
         ]);
 
         return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
