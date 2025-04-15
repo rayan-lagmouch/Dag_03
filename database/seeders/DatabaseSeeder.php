@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             PersonTypeSeeder::class,
             PersonSeeder::class,
+            ContactsTableSeeder::class,
             PackageOptionSeeder::class, // Make sure this is before ReservationSeeder
             LaneSeeder::class, // Make sure this is before ReservationSeeder
             OpeningTimeSeeder::class, // Make sure this is before ReservationSeeder

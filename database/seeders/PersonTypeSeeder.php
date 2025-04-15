@@ -14,17 +14,26 @@ class PersonTypeSeeder extends Seeder
      */
     public function run()
     {
-        // Insert default person types into person_types table
-        PersonType::create([
-            'name' => 'customer',
-            'is_active' => true,
-        ]);
+        // Insert default person types into person_types table if they don't already exist
+        if (PersonType::where('name', 'customer')->doesntExist()) {
+            PersonType::create([
+                'name' => 'customer',
+                'is_active' => true,
+            ]);
+        }
 
-        PersonType::create([
-            'name' => 'employee',
-            'is_active' => true,
-        ]);
+        if (PersonType::where('name', 'employee')->doesntExist()) {
+            PersonType::create([
+                'name' => 'employee',
+                'is_active' => true,
+            ]);
+        }
 
-        // Add more types if needed
+        if (PersonType::where('name', 'guest')->doesntExist()) {
+            PersonType::create([
+                'name' => 'guest',
+                'is_active' => true,
+            ]);
+        }
     }
 }

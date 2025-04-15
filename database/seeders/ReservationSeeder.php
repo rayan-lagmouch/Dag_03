@@ -2,15 +2,6 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-use App\Models\Reservation;
-use App\Models\Person;
-use App\Models\OpeningTime;
-use App\Models\Lane;
-use App\Models\PackageOption;
-use App\Models\ReservationStatus;
-use Illuminate\Database\Seeder;
-=======
 use Illuminate\Database\Seeder;
 use App\Models\Person;
 use App\Models\Reservation;
@@ -19,7 +10,6 @@ use App\Models\OpeningTime;
 use App\Models\Lane;
 use App\Models\ReservationStatus;
 use Carbon\Carbon;
->>>>>>> 86efda1a5dbad7b9eefd5d0c680def90586fa6f8
 
 class ReservationSeeder extends Seeder
 {
@@ -30,27 +20,6 @@ class ReservationSeeder extends Seeder
      */
     public function run()
     {
-<<<<<<< HEAD
-        // Get actual IDs from seeded data
-        $person = Person::first();
-        $openingTime = OpeningTime::first();
-        $lane = Lane::first();
-        $package = PackageOption::first();
-        $status = ReservationStatus::first();
-
-        Reservation::create([
-            'person_id' => 1, // Ensure a person with ID 1 exists
-            'opening_time_id' => 1,
-            'lane_id' => 1,
-            'package_option_id' => 1,
-            'reservation_status_id' => 2, // 2 = 'confirmed'
-            'date' => '2025-04-12',
-            'start_time' => '14:00:00',
-            'end_time' => '15:00:00',
-            'adult_count' => 2,
-            'child_count' => 1,
-            'is_active' => true,
-=======
         // Ensure that there's at least one record in the 'person_types' table
         $personType = \App\Models\PersonType::first();
         if (!$personType) {
@@ -68,7 +37,6 @@ class ReservationSeeder extends Seeder
             'nickname' => 'Johnny',
             'is_adult' => true,
             'person_type_id' => $personType->id, // Ensure this is a valid person_type_id
->>>>>>> 86efda1a5dbad7b9eefd5d0c680def90586fa6f8
         ]);
 
         // Ensure there are records in the 'opening_times', 'lanes', 'package_options', and 'reservation_statuses' tables

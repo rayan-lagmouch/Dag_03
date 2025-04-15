@@ -14,14 +14,14 @@ class PersonSeeder extends Seeder
      */
     public function run()
     {
-        // Insert records based on the provided data
+        // Customers (person_type_id = 1)
         Person::create([
             'first_name' => 'Mazin',
             'middle_name' => null,
             'last_name' => 'Jamil',
             'nickname' => 'Mazin',
             'is_adult' => true,
-            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+            'person_type_id' => 1,  // customer
         ]);
 
         Person::create([
@@ -30,7 +30,7 @@ class PersonSeeder extends Seeder
             'last_name' => 'Ruijter',
             'nickname' => 'Arjan',
             'is_adult' => true,
-            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+            'person_type_id' => 1,  // customer
         ]);
 
         Person::create([
@@ -39,7 +39,7 @@ class PersonSeeder extends Seeder
             'last_name' => 'Odijk',
             'nickname' => 'Hans',
             'is_adult' => true,
-            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+            'person_type_id' => 1,  // customer
         ]);
 
         Person::create([
@@ -48,25 +48,27 @@ class PersonSeeder extends Seeder
             'last_name' => 'Wakeren',
             'nickname' => 'Dennis',
             'is_adult' => true,
-            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+            'person_type_id' => 1,  // customer
         ]);
 
+        // Employees (person_type_id = 2)
         Person::create([
             'first_name' => 'Wilco',
             'middle_name' => 'Van',
             'last_name' => 'de Grift',
             'nickname' => 'Wilco',
             'is_adult' => true,
-            'person_type_id' => 2,  // Assuming 2 refers to 'employee'
+            'person_type_id' => 2,  // employee
         ]);
 
+        // Guests (person_type_id = 3)
         Person::create([
             'first_name' => 'Tom',
             'middle_name' => null,
             'last_name' => 'Sanders',
             'nickname' => 'Tom',
             'is_adult' => false,
-            'person_type_id' => 3,  // Assuming 3 refers to 'guest'
+            'person_type_id' => 3,  // guest
         ]);
 
         Person::create([
@@ -75,7 +77,7 @@ class PersonSeeder extends Seeder
             'last_name' => 'Sanders',
             'nickname' => 'Andrew',
             'is_adult' => false,
-            'person_type_id' => 3,  // Assuming 3 refers to 'guest'
+            'person_type_id' => 3,  // guest
         ]);
 
         Person::create([
@@ -83,8 +85,8 @@ class PersonSeeder extends Seeder
             'middle_name' => null,
             'last_name' => 'Kaldenheuvel',
             'nickname' => 'Julian',
-            'is_adult' => false,
-            'person_type_id' => 3,  // Assuming 3 refers to 'guest'
+            'is_adult' => true,
+            'person_type_id' => 3,  // guest
         ]);
     }
 }

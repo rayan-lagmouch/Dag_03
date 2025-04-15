@@ -8,23 +8,24 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
     public function up()
     {
+        // Create the person_types table
         Schema::create('person_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->boolean('is_active')->default(true);
-            $table->timestamps(); // 👈 this must be here
-
+            $table->timestamps(); // Required for tracking creation and update time
         });
     }
-    
-
-
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
     public function down(): void
     {

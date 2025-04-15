@@ -15,12 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('person_id'); // Add this column
             $table->foreign('person_id')->references('id')->on('persons')->onDelete('cascade'); // Foreign key constraint
-            // Other columns for your contacts table
+            $table->string('mobile')->nullable();  // Mobile column
+            $table->string('email')->nullable();   // Email column
             $table->timestamps();
         });
     }
-
-
 
     /**
      * Reverse the migrations.
