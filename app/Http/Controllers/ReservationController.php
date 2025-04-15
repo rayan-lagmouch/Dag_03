@@ -36,16 +36,16 @@ class ReservationController extends Controller
         return view('reservations.index', compact('reservations'));
     }
 
-    // ✅ 2. Confirmed reservations for staff
+    // ✅ 2. Bevestigde reserveringen voor medewerkers
     public function confirmed(Request $request)
     {
         $toDate = $request->input('to_date');
         $reservations = collect();
 
         if ($toDate) {
-            $reservations = Reservation::with(['person', 'packageOption', 'reservationStatus'])
-                ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed'))
-                ->whereDate('date', $toDate)
+            $reservations = Reservation::with(['person', 'packageOption', 'lane', 'reservationStatus'])
+                ->whereHas('reservationStatus', fn($q) => $q->where('name', 'confirmed')->orWhere('name', 'Bevestigd'))
+                ->whereDate('date', '<=', $toDate)
                 ->orderByDesc('date')
                 ->get();
         }
