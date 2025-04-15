@@ -6,7 +6,7 @@
             <div class="bg-white shadow-md rounded-2xl p-6">
                 <h2 class="text-2xl font-bold mb-6">Confirmed Reservations Overview</h2>
 
-                {{-- Filter Form --}}
+                {{-- Filter by date --}}
                 <form method="GET" action="{{ route('reservations.confirmed') }}" class="mb-6 flex items-center space-x-4">
                     <div>
                         <label for="to_date" class="block text-sm font-medium text-gray-700">Select a date</label>
@@ -22,7 +22,7 @@
                     </div>
                 </form>
 
-                {{-- Show Reservations or Message --}}
+                {{-- Reservations Table --}}
                 @if($reservations->count() > 0)
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-100">
@@ -44,13 +44,14 @@
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->date }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->start_time }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->end_time }}</td>
-                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->lane_id }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->lane->lane_number ?? 'N/A' }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->packageOption->name ?? 'None' }}</td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 @else
+                    {{-- No reservations found --}}
                     <div class="text-red-600 text-md font-semibold mt-4">
                         No reservation information available for the selected date.
                     </div>

@@ -3,77 +3,79 @@
 @section('content')
 <div class="container mx-auto px-4 py-10">
 
+    {{-- Error Message for Missing Scores --}}
     @if ($errors->has('score'))
         <div class="bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500 p-4 mb-4">
             ⚠️ {{ $errors->first('score') }}
         </div>
     @endif
 
-    <!-- Filter op vanaf datum -->
+    {{-- Filter by Start Date --}}
     <div class="flex flex-col md:flex-row md:justify-between items-center mb-6 gap-4">
         <div>
-            <label for="from_date" class="block text-sm text-gray-600">Toon reserveringen vanaf:</label>
+            <label for="from_date" class="block text-sm text-gray-600">Show reservations from:</label>
             <input type="date" id="from_date"
                 class="border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div class="mt-6 md:mt-0">
             <button type="button" onclick="filterReservations()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow">
-                Toon reserveringen
+                Show Reservations
             </button>
         </div>
     </div>
 
+    {{-- If No Reservations --}}
     @if ($reservations->isEmpty())
-        <div class="text-center text-gray-500 text-lg mt-10">Je hebt nog geen reserveringen geplaatst.</div>
+        <div class="text-center text-gray-500 text-lg mt-10">You haven't made any reservations yet.</div>
     @else
+        {{-- Reservation Table --}}
         <div class="overflow-x-auto bg-white rounded-xl shadow ring-1 ring-gray-200">
             <table class="min-w-full text-sm text-gray-700">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-6 py-4 text-left font-semibold">👤 Naam</th>
-                        <th class="px-6 py-4 text-left font-semibold">📅 Datum</th>
-                        <th class="px-6 py-4 text-left font-semibold">🏷️ Baan</th>
-                        <th class="px-6 py-4 text-left font-semibold">🎁 Arrangement</th>
-                        <th class="px-6 py-4 text-left font-semibold">⏰ Starttijd</th>
-                        <th class="px-6 py-4 text-left font-semibold">⏱️ Eindtijd</th>
-                        <th class="px-6 py-4 text-left font-semibold">⏳ Uren</th>
-                        <th class="px-6 py-4 text-left font-semibold">👨 Volwassenen</th>
-                        <th class="px-6 py-4 text-left font-semibold">🧒 Kinderen</th>
-                        <th class="px-6 py-4 text-left font-semibold">⚙️ Actie</th>
+                        <th class="px-6 py-4 text-left font-semibold">👤 Name</th>
+                        <th class="px-6 py-4 text-left font-semibold">📅 Date</th>
+                        <th class="px-6 py-4 text-left font-semibold">🏷️ Lane</th>
+                        <th class="px-6 py-4 text-left font-semibold">🎁 Package</th>
+                        <th class="px-6 py-4 text-left font-semibold">⏰ Start Time</th>
+                        <th class="px-6 py-4 text-left font-semibold">⏱️ End Time</th>
+                        <th class="px-6 py-4 text-left font-semibold">⏳ Hours</th>
+                        <th class="px-6 py-4 text-left font-semibold">👨 Adults</th>
+                        <th class="px-6 py-4 text-left font-semibold">🧒 Children</th>
+                        <th class="px-6 py-4 text-left font-semibold">⚙️ Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($reservations as $reservation)
                         <tr class="hover:bg-gray-50 transition duration-200">
                             <td class="px-6 py-4">
-                                {{ $reservation->person ? $reservation->person->first_name . ' ' . $reservation->person->last_name : 'Geen naam' }}
+                                {{ $reservation->person ? $reservation->person->first_name . ' ' . $reservation->person->last_name : 'No name' }}
                             </td>
                             <td class="px-6 py-4" data-date="{{ \Carbon\Carbon::parse($reservation->date)->format('Y-m-d') }}">
-                                {{ \Carbon\Carbon::parse($reservation->date)->format('l d F Y') }}
+                                {{ \Carbon\Carbon::parse($reservation->date)->translatedFormat('l d F Y') }}
                             </td>
-                            <td class="px-6 py-4">{{ $reservation->lane->number ?? 'Niet toegewezen' }}</td>
-                            <td class="px-6 py-4">{{ $reservation->packageOption->name ?? 'Geen' }}</td>
+                            <td class="px-6 py-4">{{ $reservation->lane->number ?? 'Not assigned' }}</td>
+                            <td class="px-6 py-4">{{ $reservation->packageOption->name ?? 'None' }}</td>
                             <td class="px-6 py-4">{{ \Carbon\Carbon::parse($reservation->start_time)->format('H:i') }}</td>
                             <td class="px-6 py-4">{{ \Carbon\Carbon::parse($reservation->end_time)->format('H:i') }}</td>
                             <td class="px-6 py-4">
-                                {{ \Carbon\Carbon::parse($reservation->start_time)->diffInHours(\Carbon\Carbon::parse($reservation->end_time)) }} uur
+                                {{ \Carbon\Carbon::parse($reservation->start_time)->diffInHours(\Carbon\Carbon::parse($reservation->end_time)) }} hour(s)
                             </td>
                             <td class="px-6 py-4">{{ $reservation->adult_count }}</td>
                             <td class="px-6 py-4">{{ $reservation->child_count }}</td>
                             <td class="px-6 py-4 space-y-2">
-    <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline block">
-        Baan wijzigen
-    </a>
+                                <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline block">
+                                    Change Lane
+                                </a>
 
-    <a href="{{ route('reservations.edit.package', $reservation->id) }}" class="text-purple-600 hover:text-purple-800 underline block">
-        Arrangement wijzigen
-    </a>
+                                <a href="{{ route('reservations.edit.package', $reservation->id) }}" class="text-purple-600 hover:text-purple-800 underline block">
+                                    Change Package
+                                </a>
 
-    <a href="{{ route('scores.show', $reservation->id) }}" class="text-green-600 hover:text-green-800 underline block">
-        Bekijk Uitslagen
-    </a>
-</td>
-
+                                <a href="{{ route('scores.show', $reservation->id) }}" class="text-green-600 hover:text-green-800 underline block">
+                                    View Scores
+                                </a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -81,23 +83,25 @@
         </div>
     @endif
 
-    <!-- Pop-ups -->
+    {{-- Success Popup --}}
     <div id="success-popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden">
         <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
-            <h2 class="text-xl font-bold text-green-600 mb-2">✅ Gelukt!</h2>
-            <p class="text-gray-600">De baan is succesvol aangepast.</p>
-            <button id="close-popup" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Sluiten</button>
+            <h2 class="text-xl font-bold text-green-600 mb-2">✅ Success!</h2>
+            <p class="text-gray-600">The lane has been successfully updated.</p>
+            <button id="close-popup" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Close</button>
         </div>
     </div>
 
+    {{-- Warning Popup --}}
     <div id="warning-popup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md text-center">
-            <h2 class="text-xl font-bold text-red-600 mb-2">⚠️ Let op!</h2>
-            <p class="text-gray-600">Je hebt kinderen in de groep. Kies een baan met hekjes (7 of 8).</p>
-            <button id="close-warning-popup" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">Sluiten</button>
+            <h2 class="text-xl font-bold text-red-600 mb-2">⚠️ Attention!</h2>
+            <p class="text-gray-600">There are children in the group. Please select a lane with fences (7 or 8).</p>
+            <button id="close-warning-popup" class="mt-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">Close</button>
         </div>
     </div>
 
+    {{-- JavaScript --}}
     <script>
         function showSuccessPopup() {
             document.getElementById('success-popup').classList.remove('hidden');
