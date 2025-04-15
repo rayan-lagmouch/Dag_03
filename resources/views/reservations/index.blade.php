@@ -51,7 +51,10 @@
                             <td class="py-2 px-4 border-b">{{ \Carbon\Carbon::parse($reservation->start_time)->diffInHours(\Carbon\Carbon::parse($reservation->end_time)) }} hours</td>
                             <td class="py-2 px-4 border-b">{{ $reservation->adult_count }}</td>
                             <td class="py-2 px-4 border-b">{{ $reservation->child_count }}</td>
+                            <td class="py-2 px-4 border-b">
+                                <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700">Edit Lane</a>
 
+                            </td>
 
                         </tr>
                     @endforeach

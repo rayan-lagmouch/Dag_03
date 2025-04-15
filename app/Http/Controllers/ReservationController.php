@@ -87,8 +87,30 @@ class ReservationController extends Controller
 
     public function updateLane(Request $request, $id)
     {
+        // Log incoming data
+        \Log::info("Received request to update lane for reservation ID: $id");
+        \Log::info("Request Data: ", $request->all());
         $request->validate(['lane_number' => 'required|integer|in:7,8']);
 
+        // Find the reservation
+        $reservation = Reservation::findOrFail($id);
+
+        // If the reservation has kids, enforce lane selection rule
+        if ($reservation->child_count > 0) {
+            $request->validate([
+                'lane_number' => 'required|integer|in:7,8', // Only lanes 7 and 8 are allowed if there are kids
+            ], [
+                'lane_number.in' => 'You can only select lane 7 or 8 if you have kids due to safety walls.',
+            ]);
+        } else {
+            // If there are no kids, allow any lane number between 1 and 8
+            $request->validate([
+                'lane_number' => 'required|integer|in:1,2,3,4,5,6,7,8',
+            ]);
+        }
+
+        // Update the lane number
+        $reservation->lane_id = $request->lane_number;
         $reservation = Reservation::findOrFail($id);
         $reservation->lane_number = $request->lane_number;
         $reservation->save();
@@ -97,6 +119,9 @@ class ReservationController extends Controller
     }
 
     // Package editing
+
+
+
     public function editPackage($id)
     {
         $reservation = Reservation::findOrFail($id);

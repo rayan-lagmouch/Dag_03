@@ -35,8 +35,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 
     // Show the form to edit the lane (GET request)
 
-    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit.lane');
-    Route::put('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
+    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
+    Route::put('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update-lane');
 
 
 
