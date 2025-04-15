@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
-        Uitslag Wijzigen - Speler #{{ $score->id }}
+        Edit Score - Player #{{ $score->id }}
     </h1>
 
     @if(session('success'))
@@ -31,7 +31,7 @@
         @method('PUT')
 
         <div class="mb-4">
-            <label for="points" class="block text-sm font-medium text-gray-700">Aantal punten (optioneel)</label>
+            <label for="points" class="block text-sm font-medium text-gray-700">Number of points (optional)</label>
             <input
                 type="number"
                 name="points"
@@ -45,11 +45,11 @@
 
         <div class="flex justify-between mt-6">
             <a href="{{ route('scores.editable') }}" class="inline-block text-blue-600 hover:underline">
-                ⬅️ Terug naar overzicht
+                ⬅️ Back to overview
             </a>
 
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md shadow">
-                Wijzigen
+                Update
             </button>
         </div>
     </form>
