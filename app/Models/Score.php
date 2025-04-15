@@ -10,6 +10,7 @@ class Score extends Model
     use HasFactory;
 
     protected $fillable = [
+        'game_id',
         'reservation_id',
         'person_id',
         'points',

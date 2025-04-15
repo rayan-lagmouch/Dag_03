@@ -3,22 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reservation;
-use App\Models\Score;
 use Illuminate\Http\Request;
 
 class ScoreController extends Controller
 {
     public function show(Reservation $reservation)
-{
-    $scores = Score::with('game.person')
-        ->orderBy('points', 'desc')
-        ->get();
-        
-
-    return view('scores.show', compact('scores', 'reservation'));
-}
-
-
+    {
+        $scores = $reservation->games()->with(['person', 'score'])->get();
+    
+        // 👇 THIS LINE is the key to show/hide results
+        if ($scores->isEmpty() || $scores->every(fn($game) => $game->score === null)) {
+            return back()->withErrors([
+                'score' => 'There are no known scores for the selected reservation.',
+            ]);
+        }
+    
+        $scores = $scores->sortByDesc(fn($game) => $game->score->points ?? 0);
+    
+        return view('scores.show', compact('scores', 'reservation'));
+    }
+    
 
     public function edit($id)
     {

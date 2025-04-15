@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
  */
 
 Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.show');
+
 
 
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');    // View personal reservations
@@ -44,9 +46,6 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 
     // Store the new reservation
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
-
-    // Route in web.php
-    Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.show');
 
 
     // Update lane

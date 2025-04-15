@@ -16,23 +16,25 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $reservations = Reservation::where('person_id', Auth::id())
-        ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-        ->orderBy('date', 'desc')
-        ->get();    
-
+            ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+            ->orderBy('date', 'desc')
+            ->get();    
+    
         if (Auth::user()->hasRole('customer') && str_starts_with(Auth::user()->name, 'Customer')) {
             $reservations = Reservation::with('packageOption', 'user')
                 ->get();
         } else {
             $reservations = Reservation::with(['packageOption', 'lane', 'person', 'status'])
                 ->whereHas('status', fn($q) => $q->where('name', 'confirmed'))
-                ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
-                ->orderBy('date', $sortOrder)
+                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+                ->orderBy('date', 'desc')
                 ->get();
         }
-
+    
         return view('reservations.index', compact('reservations'));
     }
+    
+    
 
     // ✅ 2. Bevestigde reserveringen voor medewerkers
     public function confirmed(Request $request)
