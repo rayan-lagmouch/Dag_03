@@ -9,15 +9,17 @@ use Illuminate\Http\Request;
 class ScoreController extends Controller
 {
     public function show(Reservation $reservation)
-    {
-        $scores = $reservation->scores()->orderBy('points', 'desc')->get();
+{
+    $scores = Score::with('game.person')
+        ->whereHas('game', function ($query) use ($reservation) {
+            $query->where('reservation_id', $reservation->id);
+        })
+        ->orderBy('points', 'desc')
+        ->get();
 
-        if ($scores->isEmpty()) {
-            return back()->withErrors(['score' => 'No scores available for this reservation']);
-        }
+    return view('scores.show', compact('scores', 'reservation'));
+}
 
-        return view('scores.show', compact('scores', 'reservation'));
-    }
 
 
     public function edit($id)

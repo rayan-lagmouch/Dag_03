@@ -45,14 +45,18 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Store the new reservation
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
-    // View and update package option for reservation
-    Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit-package');
-    Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update-package');
+    // Route in web.php
+    Route::get('reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.my');
 
-    // Route for showing reservation scores (assuming the score controller is set up)
-    Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.my');
+
+    // Update lane
+    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit.lane');
+    Route::post('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
+
+    // Update package
+    Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit.package');
+    Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update.package');
 });
-
 
 /**
  * EMPLOYEE ROUTES (Role: employee)

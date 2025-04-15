@@ -13,6 +13,12 @@ class ReservationController extends Controller
 {
     public function index(Request $request)
     {
+        $reservations = Reservation::where('person_id', Auth::id())
+        ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+        ->orderBy('date', 'desc')
+        ->get();    
+        
+       
         if (Auth::user()->hasRole('customer')) {
             $reservations = Reservation::with('packageOption') // Eager load the related package options
             ->where('person_id', Auth::id())

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Person extends Model
 {
     use HasFactory;
+    
 
     protected $table = 'persons';
 
@@ -38,5 +39,10 @@ public function contact()
     {
         return $this->first_name . ' ' . $this->last_name;
     }
+    
+    public function games()
+{
+    return $this->hasMany(Game::class);
+}
 }
 
