@@ -17,13 +17,9 @@ class ReservationController extends Controller
         ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
         ->orderBy('date', 'desc')
         ->get();    
-        
-       
-        if (Auth::user()->hasRole('customer')) {
-            $reservations = Reservation::with('packageOption') // Eager load the related package options
-            ->where('person_id', Auth::id())
-                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-                ->orderBy('date', 'desc')
+
+        if (Auth::user()->hasRole('customer') && str_starts_with(Auth::user()->name, 'Customer')) {
+            $reservations = Reservation::with('packageOption', 'user')
                 ->get();
         } else {
             $reservations = Reservation::with('packageOption') // Eager load the related package options

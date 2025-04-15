@@ -28,6 +28,11 @@ class Reservation extends Model
         return $this->belongsTo(Person::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
 
     public function packageOption()

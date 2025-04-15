@@ -46,11 +46,11 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
     // Route in web.php
-    Route::get('reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.my');
+    Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.show');
 
 
     // Update lane
-    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit.lane');
+    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
     Route::post('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
 
     // Update package
@@ -73,10 +73,7 @@ Route::middleware(['auth', 'role:employee'])->group(function () {
     Route::get('/contacts/{customer}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
     Route::post('/contacts/{customer}/update', [ContactController::class, 'update'])->name('contacts.update');
 
-    // Edit Scores
-    Route::get('/scores/editable', [ScoreController::class, 'editable'])->name('scores.editable');
-    Route::get('/scores/{score}/edit', [ScoreController::class, 'edit'])->name('scores.edit');
-    Route::post('/scores/{score}/update', [ScoreController::class, 'update'])->name('scores.update');
+
 });
 
 require __DIR__.'/auth.php';
