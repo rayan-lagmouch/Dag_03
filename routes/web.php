@@ -26,61 +26,34 @@ Route::middleware('auth')->group(function () {
 /**
  * CUSTOMER ROUTES (Role: customer)
  */
-
 Route::middleware(['auth', 'role:customer'])->group(function () {
-    Route::get('/reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.show');
-
-
-
-    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');    // View personal reservations
-
-
-    // Show the form to edit the lane (GET request)
-
-    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
-    Route::put('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update-lane');
-
-
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
 
     Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
-
-    // Store the new reservation
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
-
-    // Update lane
     Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
     Route::post('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
 
-    // Update package
     Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit.package');
     Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update.package');
+
+    Route::get('/reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.show');
 });
 
 /**
  * EMPLOYEE ROUTES (Role: employee)
  */
 Route::middleware(['auth', 'role:employee'])->group(function () {
-    // Confirmed reservations overview
     Route::get('/reservations/confirmed', [ReservationController::class, 'confirmed'])->name('reservations.confirmed');
 
-    // Customer personal data overview
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
 
-    // Contact info (edit email, etc.)
     Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('/contacts/{customer}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
     Route::post('/contacts/{customer}/update', [ContactController::class, 'update'])->name('contacts.update');
-
-
-Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
-Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
-
-
-Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
-Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
-
-
 });
 
 require __DIR__.'/auth.php';

@@ -61,13 +61,19 @@
                             <td class="px-6 py-4">{{ $reservation->adult_count }}</td>
                             <td class="px-6 py-4">{{ $reservation->child_count }}</td>
                             <td class="px-6 py-4 space-y-2">
-                                <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline block">
-                                    Baan wijzigen
-                                </a>
-                                <a href="{{ route('scores.show', $reservation->id) }}" class="text-green-600 hover:text-green-800 underline block">
-                                    Bekijk Uitslagen
-                                </a>
-                            </td>
+    <a href="{{ route('reservations.edit-lane', $reservation->id) }}" class="text-blue-500 hover:text-blue-700 underline block">
+        Baan wijzigen
+    </a>
+
+    <a href="{{ route('reservations.edit.package', $reservation->id) }}" class="text-purple-600 hover:text-purple-800 underline block">
+        Arrangement wijzigen
+    </a>
+
+    <a href="{{ route('scores.show', $reservation->id) }}" class="text-green-600 hover:text-green-800 underline block">
+        Bekijk Uitslagen
+    </a>
+</td>
+
                         </tr>
                     @endforeach
                 </tbody>

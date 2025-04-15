@@ -12,15 +12,26 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @role('customer')
-                    <x-dashboard-link route="reservations.index" label="My Reservations" />
-                    <x-dashboard-link route="scores.show" label="View Scores" />
+                        <x-dashboard-link route="reservations.index" label="My Reservations" />
+
+                        @php
+                            $lastReservation = \App\Models\Reservation::where('person_id', auth()->id())
+                                ->latest('date')
+                                ->first();
+                        @endphp
+
+                        @if($lastReservation)
+                            <x-dashboard-link 
+                                :route="['scores.show', ['reservation' => $lastReservation->id]]" 
+                                label="View Scores (Latest Reservation)" />
+                        @endif
                     @endrole
 
                     @role('employee')
-                    <x-dashboard-link route="reservations.confirmed" label="Confirmed Reservations" />
-                    <x-dashboard-link route="customers.index" label="Customer Overview" />
-                    <x-dashboard-link route="scores.editable" label="Edit Scores" />
-                    <x-dashboard-link route="contacts.index" label="Update Contact Info" />
+                        <x-dashboard-link route="reservations.confirmed" label="Confirmed Reservations" />
+                        <x-dashboard-link route="customers.index" label="Customer Overview" />
+                        <x-dashboard-link route="scores.editable" label="Edit Scores" />
+                        <x-dashboard-link route="contacts.index" label="Update Contact Info" />
                     @endrole
                 </div>
             </div>
