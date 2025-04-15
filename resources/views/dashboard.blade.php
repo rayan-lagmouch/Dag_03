@@ -31,7 +31,6 @@
                         <x-dashboard-link route="reservations.confirmed" label="Confirmed Reservations" />
                         <x-dashboard-link route="customers.index" label="Customer Overview" />
                         <x-dashboard-link route="scores.editable" label="Edit Scores" />
-                        <x-dashboard-link route="contacts.index" label="Update Contact Info" />
                     @endrole
                 </div>
             </div>

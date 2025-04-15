@@ -138,8 +138,6 @@ $game7 = Game::create([
     'game_count' => 1,
 ]);
 
-// ✅ GEEN Score::create(...) hier – deze reservering blijft leeg qua score
-
 
 
     }

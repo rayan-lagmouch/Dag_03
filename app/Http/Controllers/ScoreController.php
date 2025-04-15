@@ -34,9 +34,13 @@ class ScoreController extends Controller
 
     public function editable()
     {
-        $scores = Score::with('game.person', 'game.reservation')->orderByDesc('updated_at')->get();
+        $scores = Score::with('game.person', 'game.reservation')
+            ->orderByDesc('points') // 🔥 Sorteer op punten (hoog naar laag)
+            ->get();
+    
         return view('scores.editable', compact('scores'));
     }
+    
 
     public function edit($id)
     {
