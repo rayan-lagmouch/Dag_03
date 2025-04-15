@@ -44,7 +44,7 @@
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->date }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->start_time }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->end_time }}</td>
-                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->lane_id }}</td>
+                                <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->lane->lane_number ?? 'N/A' }}</td>
                                 <td class="px-4 py-2 text-sm text-gray-700">{{ $reservation->packageOption->name ?? 'None' }}</td>
                             </tr>
                         @endforeach
