@@ -13,17 +13,20 @@ return new class extends Migration
     {
         Schema::create('persons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('person_type_id')->constrained('person_types');
+            $table->unsignedBigInteger('person_type_id')->nullable();
+            $table->timestamps();
+            $table->foreign('person_type_id')
+                ->references('id')
+                ->on('person_types')
+                ->onDelete('set null');
+            
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('nickname');
             $table->boolean('is_adult')->default(true);
-            $table->timestamps();
-
         });
     }
-
 
     /**
      * Reverse the migrations.

@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('person_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->timestamps(); // This automatically adds `created_at` and `updated_at` columns
             $table->boolean('is_active')->default(true);
+            $table->timestamps(); // 👈 this must be here
+
         });
     }
+    
 
 
 

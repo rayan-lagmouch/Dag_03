@@ -14,16 +14,77 @@ class PersonSeeder extends Seeder
      */
     public function run()
     {
-        // Example data for Person seeder
+        // Insert records based on the provided data
         Person::create([
-            'first_name' => 'John',
-            'middle_name' => 'Doe',  // You can set this as null if not required
-            'last_name' => 'Doe',
-            'nickname' => 'Johnny',
-            'is_adult' => true,  // Adjust as necessary, defaults to true
-            'person_type_id' => 1,  // Ensure this refers to a valid 'person_types' ID
+            'first_name' => 'Mazin',
+            'middle_name' => null,
+            'last_name' => 'Jamil',
+            'nickname' => 'Mazin',
+            'is_adult' => true,
+            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
         ]);
 
-        // You can add more records as needed
+        Person::create([
+            'first_name' => 'Arjan',
+            'middle_name' => 'de',
+            'last_name' => 'Ruijter',
+            'nickname' => 'Arjan',
+            'is_adult' => true,
+            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+        ]);
+
+        Person::create([
+            'first_name' => 'Hans',
+            'middle_name' => null,
+            'last_name' => 'Odijk',
+            'nickname' => 'Hans',
+            'is_adult' => true,
+            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+        ]);
+
+        Person::create([
+            'first_name' => 'Dennis',
+            'middle_name' => 'van',
+            'last_name' => 'Wakeren',
+            'nickname' => 'Dennis',
+            'is_adult' => true,
+            'person_type_id' => 1,  // Assuming 1 refers to 'customer'
+        ]);
+
+        Person::create([
+            'first_name' => 'Wilco',
+            'middle_name' => 'Van',
+            'last_name' => 'de Grift',
+            'nickname' => 'Wilco',
+            'is_adult' => true,
+            'person_type_id' => 2,  // Assuming 2 refers to 'employee'
+        ]);
+
+        Person::create([
+            'first_name' => 'Tom',
+            'middle_name' => null,
+            'last_name' => 'Sanders',
+            'nickname' => 'Tom',
+            'is_adult' => false,
+            'person_type_id' => 3,  // Assuming 3 refers to 'guest'
+        ]);
+
+        Person::create([
+            'first_name' => 'Andrew',
+            'middle_name' => null,
+            'last_name' => 'Sanders',
+            'nickname' => 'Andrew',
+            'is_adult' => false,
+            'person_type_id' => 3,  // Assuming 3 refers to 'guest'
+        ]);
+
+        Person::create([
+            'first_name' => 'Julian',
+            'middle_name' => null,
+            'last_name' => 'Kaldenheuvel',
+            'nickname' => 'Julian',
+            'is_adult' => false,
+            'person_type_id' => 3,  // Assuming 3 refers to 'guest'
+        ]);
     }
 }
