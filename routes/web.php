@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ScoreController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ContactController;
 
@@ -17,43 +16,55 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    // Profile
+    // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 /**
- * CUSTOMER ROUTES (Role: customer)
+ * CUSTOMER ROUTES
  */
 Route::middleware(['auth', 'role:customer'])->group(function () {
+    // Reserveringen
     Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
-
     Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
+    // Baan wijzigen
     Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
     Route::post('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
 
+    // Arrangement wijzigen
     Route::get('/reservations/{reservation}/edit-package', [ReservationController::class, 'editPackage'])->name('reservations.edit.package');
     Route::post('/reservations/{reservation}/update-package', [ReservationController::class, 'updatePackage'])->name('reservations.update.package');
 
+    // Scores bekijken
     Route::get('/reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.show');
 });
 
 /**
- * EMPLOYEE ROUTES (Role: employee)
+ * EMPLOYEE ROUTES
  */
 Route::middleware(['auth', 'role:employee'])->group(function () {
+    // Bevestigde reserveringen
     Route::get('/reservations/confirmed', [ReservationController::class, 'confirmed'])->name('reservations.confirmed');
 
+    // Klantbeheer
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
     Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
 
+    // Contactgegevens beheren
     Route::get('/contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('/contacts/{customer}/edit', [ContactController::class, 'edit'])->name('contacts.edit');
     Route::post('/contacts/{customer}/update', [ContactController::class, 'update'])->name('contacts.update');
+
+    // Scorebeheer
+    Route::get('/scores', [ScoreController::class, 'index'])->name('scores.index');
+    Route::get('/scores/editable', [ScoreController::class, 'editable'])->name('scores.editable');
+    Route::get('/scores/{id}/edit', [ScoreController::class, 'edit'])->name('scores.edit');
+    Route::put('/scores/{id}', [ScoreController::class, 'update'])->name('scores.update');
 });
 
 require __DIR__.'/auth.php';
