@@ -16,7 +16,13 @@
             <form action="{{ route('customers.update', $customer->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                
+
+                {{-- Visible ID Field --}}
+                <div class="mb-4">
+                    <label for="id" class="block text-sm font-medium text-gray-700">Klant ID</label>
+                    <input type="text" id="id" name="id" value="{{ old('id', $customer->id) }}" class="border rounded p-2 w-full">
+                </div>
+
                 <div class="mb-4">
                     <label for="first_name" class="block text-sm font-medium text-gray-700">Voornaam</label>
                     <input type="text" id="first_name" name="first_name" value="{{ old('first_name', $customer->first_name) }}" class="border rounded p-2 w-full" required>

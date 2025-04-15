@@ -5,6 +5,13 @@
         <div class="bg-white p-6 rounded-xl shadow-md">
             <h1 class="text-2xl font-bold mb-4">Overzicht Klanten</h1>
 
+            {{-- Display Error Message --}}
+            @if(session('error'))
+                <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
+                    <strong>Fout!</strong> {{ session('error') }}
+                </div>
+            @endif
+
             {{-- Date Filter Form --}}
             <form method="GET" action="{{ route('customers.index') }}" class="mb-6 flex items-center gap-4">
                 <label for="date" class="text-sm font-medium text-gray-700">Selecteer datum (Registratiedatum tot):</label>
@@ -26,18 +33,18 @@
                                 <th class="px-4 py-2 text-left">Mobiel</th>
                                 <th class="px-4 py-2 text-left">Email</th>
                                 <th class="px-4 py-2 text-left">Volwassen</th>
-                                <th class="px-4 py-2 text-left">Acties</th>  <!-- Added Actions Column -->
+                                <th class="px-4 py-2 text-left">Acties</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($customers as $customer)
                                 <tr class="border-t">
-                                    <td class="px-4 py-2">{{ $customer->first_name . ' ' . $customer->last_name }}</td>  {{-- Full name --}}
-                                    <td class="px-4 py-2">{{ optional($customer->contact)->mobile ?? '—' }}</td>  {{-- Mobile --}}
-                                    <td class="px-4 py-2">{{ optional($customer->contact)->email ?? '—' }}</td>  {{-- Email --}}
-                                    <td class="px-4 py-2">{{ $customer->is_adult ? 'Ja' : 'Nee' }}</td>  {{-- Adult status --}}
+                                    <td class="px-4 py-2">{{ $customer->first_name . ' ' . $customer->last_name }}</td>
+                                    <td class="px-4 py-2">{{ optional($customer->contact)->mobile ?? '—' }}</td>
+                                    <td class="px-4 py-2">{{ optional($customer->contact)->email ?? '—' }}</td>
+                                    <td class="px-4 py-2">{{ $customer->is_adult ? 'Ja' : 'Nee' }}</td>
                                     <td class="px-4 py-2">
-                                        <a href="{{ route('customers.edit', $customer->id) }}" class="text-blue-600 hover:text-blue-800">Wijzigen</a>  {{-- Edit Link --}}
+                                        <a href="{{ route('customers.edit', $customer->id) }}" class="text-blue-600 hover:text-blue-800">Wijzigen</a>
                                     </td>
                                 </tr>
                             @endforeach
