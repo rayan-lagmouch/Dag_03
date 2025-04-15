@@ -15,13 +15,13 @@ class ReservationController extends Controller
     // ✅ 1. Dashboard overzicht
     public function index(Request $request)
     {
-        $sortOrder = $request->get('sort_by', 'desc');
+        $reservations = Reservation::where('person_id', Auth::id())
+        ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
+        ->orderBy('date', 'desc')
+        ->get();    
 
-        if (Auth::user()->hasRole('customer')) {
-            $reservations = Reservation::with('packageOption')
-                ->where('person_id', Auth::id())
-                ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-                ->orderBy('date', $sortOrder)
+        if (Auth::user()->hasRole('customer') && str_starts_with(Auth::user()->name, 'Customer')) {
+            $reservations = Reservation::with('packageOption', 'user')
                 ->get();
         } else {
             $reservations = Reservation::with(['packageOption', 'lane', 'person', 'status'])

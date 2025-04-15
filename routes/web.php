@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 
 
     // Update lane
-    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit.lane');
+    Route::get('/reservations/{reservation}/edit-lane', [ReservationController::class, 'editLane'])->name('reservations.edit-lane');
     Route::post('/reservations/{reservation}/update-lane', [ReservationController::class, 'updateLane'])->name('reservations.update.lane');
 
     // Update package
@@ -77,10 +77,11 @@ Route::middleware(['auth', 'role:employee'])->group(function () {
 Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
 Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
 
-    // Edit Scores
-    Route::get('/scores/editable', [ScoreController::class, 'editable'])->name('scores.editable');
-    Route::get('/scores/{score}/edit', [ScoreController::class, 'edit'])->name('scores.edit');
-    Route::post('/scores/{score}/update', [ScoreController::class, 'update'])->name('scores.update');
+
+Route::get('/customers/{id}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+Route::put('/customers/{id}', [CustomerController::class, 'update'])->name('customers.update');
+
+
 });
 
 require __DIR__.'/auth.php';

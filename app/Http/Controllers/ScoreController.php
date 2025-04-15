@@ -11,11 +11,9 @@ class ScoreController extends Controller
     public function show(Reservation $reservation)
 {
     $scores = Score::with('game.person')
-        ->whereHas('game', function ($query) use ($reservation) {
-            $query->where('reservation_id', $reservation->id);
-        })
         ->orderBy('points', 'desc')
         ->get();
+        
 
     return view('scores.show', compact('scores', 'reservation'));
 }
