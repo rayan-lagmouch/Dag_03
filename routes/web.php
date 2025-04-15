@@ -46,7 +46,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
 
     // Route in web.php
-    Route::get('reservations/{reservation}/scores', [ScoreController::class, 'show'])->name('scores.my');
+    Route::get('reservations/scores', [ScoreController::class, 'show'])->name('scores.show');
 
 
     // Update lane
