@@ -9,109 +9,67 @@ use App\Models\OpeningTime;
 use App\Models\ReservationStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class ReservationController extends Controller
 {
+    // ✅ 1. Dashboard overzicht
     public function index(Request $request)
     {
-        $reservations = Reservation::where('person_id', Auth::id())
-        ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-        ->orderBy('date', 'desc')
-        ->get();    
-        
-       
+        $sortOrder = $request->get('sort_by', 'desc');
+
         if (Auth::user()->hasRole('customer')) {
-            $reservations = Reservation::with('packageOption') // Eager load the related package options
-            ->where('person_id', Auth::id())
+            $reservations = Reservation::with('packageOption')
+                ->where('person_id', Auth::id())
                 ->when($request->from_date, fn($q) => $q->whereDate('date', '>=', $request->from_date))
-                ->orderBy('date', 'desc')
+                ->orderBy('date', $sortOrder)
                 ->get();
         } else {
-            $reservations = Reservation::with('packageOption') // Eager load the related package options
-            ->where('status', 'confirmed')
+            $reservations = Reservation::with(['packageOption', 'lane', 'person', 'status'])
+                ->whereHas('status', fn($q) => $q->where('name', 'confirmed'))
                 ->when($request->to_date, fn($q) => $q->whereDate('date', '<=', $request->to_date))
-                ->orderBy('date', 'desc')
+                ->orderBy('date', $sortOrder)
                 ->get();
         }
 
         return view('reservations.index', compact('reservations'));
     }
 
-    public function editLane($id)
+    // ✅ 2. Bevestigde reserveringen voor medewerkers
+    public function confirmed(Request $request)
     {
-        $reservation = Reservation::findOrFail($id); // Fetch reservation by ID
-        return view('reservations.edit-lane', compact('reservation')); // Pass the reservation to the view
-    }
+        $toDate = $request->input('to_date');
+        $reservations = collect();
 
-
-    // app/Http/Controllers/ReservationController.php
-
-    public function updateLane(Request $request, $id)
-    {
-        // Log incoming data for debugging
-        \Log::info("Updating lane for reservation ID: $id with request data: " . json_encode($request->all()));
-
-        // Validate the request
-        $request->validate([
-            'lane_number' => 'required|integer|in:1,2,3,4,5,6,7,8',
-        ]);
-
-        // Find the reservation by ID
-        $reservation = Reservation::findOrFail($id);
-
-        // Update the lane
-        $reservation->lane_id = $request->lane_number;
-        $reservation->save();
-
-        // Log successful update
-        \Log::info("Lane updated successfully for reservation ID: $id");
-
-        // Redirect with success message
-        return redirect()->route('reservations.index')->with('success', 'Lane updated successfully');
-    }
-
-
-
-    public function editPackage($id)
-    {
-        $reservation = Reservation::findOrFail($id);
-        $packages = PackageOption::all();
-        return view('reservations.edit-package', compact('reservation', 'packages'));
-    }
-
-    public function updatePackage(Request $request, $id)
-    {
-        $reservation = Reservation::findOrFail($id);
-
-        if ($request->package_option == 'bachelor_party') {
-            return back()->withErrors(['package_option' => 'Bachelor party package is not suitable for children']);
+        if ($toDate) {
+            $reservations = Reservation::with(['person', 'packageOption', 'status'])
+                ->whereHas('status', fn($q) => $q->where('name', 'confirmed'))
+                ->whereDate('date', $toDate)
+                ->orderByDesc('date')
+                ->get();
         }
 
-        $reservation->package_option_id = $request->package_option;
-        $reservation->save();
-
-        return redirect()->route('reservations.index')->with('success', 'Package option updated');
+        return view('reservations.confirmed', [
+            'reservations' => $reservations,
+            'selectedDate' => $toDate,
+        ]);
     }
 
-    // app/Http/Controllers/ReservationController.php
-
+    // ✅ 3. Nieuw formulier
     public function create()
     {
-        // Fetch the required data from the database
-        $packages = PackageOption::all(); // Fetch all package options
-        $lanes = Lane::where('is_active', true)->get(); // Fetch active lanes
-        $openingTimes = OpeningTime::where('is_active', true)->get(); // Fetch active opening times
-        $statuses = ReservationStatus::where('is_active', true)->get(); // Fetch active reservation statuses
+        $packages = PackageOption::all();
+        $lanes = Lane::where('is_active', true)->get();
+        $openingTimes = OpeningTime::where('is_active', true)->get();
+        $statuses = ReservationStatus::where('is_active', true)->get();
 
-        // Pass data to the view
         return view('reservations.create', compact('packages', 'lanes', 'openingTimes', 'statuses'));
     }
 
-    // Store the reservation
+    // ✅ 4. Reservering opslaan
     public function store(Request $request)
     {
-        // Validate data
         $request->validate([
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
             'adult_count' => 'required|integer|min:0',
@@ -122,7 +80,6 @@ class ReservationController extends Controller
             'reservation_status_id' => 'required|exists:reservation_statuses,id',
         ]);
 
-        // Create the reservation
         Reservation::create([
             'date' => $request->date,
             'start_time' => $request->start_time,
@@ -130,16 +87,70 @@ class ReservationController extends Controller
             'adult_count' => $request->adult_count,
             'child_count' => $request->child_count,
             'package_option_id' => $request->package_option,
-            'lane_id' => $request->lane_id, // Storing lane_id now
+            'lane_id' => $request->lane_id,
             'opening_time_id' => $request->opening_time_id,
             'reservation_status_id' => $request->reservation_status_id,
-            'person_id' => Auth::id(),  // link to authenticated user
-            'status' => 'pending',  // set status as pending by default
+            'person_id' => Auth::id(),
+            'status' => 'pending',
         ]);
 
-        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully');
+        return redirect()->route('reservations.index')->with('success', 'Reservation created successfully!');
     }
 
+    // ✅ 5. Edit Lane
+    public function editLane($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        return view('reservations.edit-lane', compact('reservation'));
+    }
 
+    public function updateLane(Request $request, $id)
+    {
+        \Log::info("Received request to update lane for reservation ID: $id");
+        \Log::info("Request Data: ", $request->all());
 
+        $reservation = Reservation::findOrFail($id);
+
+        if ($reservation->child_count > 0) {
+            $request->validate([
+                'lane_number' => 'required|integer|in:7,8',
+            ], [
+                'lane_number.in' => 'You can only select lane 7 or 8 if you have kids due to safety walls.',
+            ]);
+        } else {
+            $request->validate([
+                'lane_number' => 'required|integer|in:1,2,3,4,5,6,7,8',
+            ]);
+        }
+
+        $reservation->lane_id = $request->lane_number;
+        $reservation->save();
+
+        return redirect()->route('reservations.index')->with('success', 'Lane updated successfully');
+    }
+
+    // ✅ 6. Edit Package
+    public function editPackage($id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $packages = PackageOption::all();
+        return view('reservations.edit-package', compact('reservation', 'packages'));
+    }
+
+    public function updatePackage(Request $request, $id)
+    {
+        $reservation = Reservation::findOrFail($id);
+        $packageOption = PackageOption::find($request->package_option);
+
+        $notSuitablePackages = ['bachelor_party', 'vrijgezellenfeest'];
+
+        if ($reservation->child_count > 0 && in_array($packageOption->name, $notSuitablePackages)) {
+            return back()->withErrors(['package_option' => 'Package "' . $packageOption->name . '" is not suitable for children.']);
+        }
+
+        $reservation->package_option_id = $packageOption->id;
+        $reservation->save();
+
+        return redirect()->route('reservations.index')->with('success', 'Package option updated');
+    }
 }

@@ -16,20 +16,23 @@ class ReservationSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get actual IDs from seeded data
-        $person = Person::first();
-        $secondPerson = Person::skip(1)->first() ?? Person::factory()->create(); // Zorg voor 2 personen
+        // Zorg dat er minstens 2 personen zijn
+        $person = Person::first() ?? Person::factory()->create();
+        $secondPerson = Person::skip(1)->first() ?? Person::factory()->create();
+
+        // Ophalen van gekoppelde modellen
         $openingTime = OpeningTime::first();
         $lane = Lane::first();
         $package = PackageOption::first();
-        $status = ReservationStatus::find(2); // 2 = 'confirmed'
+        $status = ReservationStatus::find(2) ?? ReservationStatus::first(); // fallback
 
+        // Aanmaken van een reservering
         $reservation = Reservation::create([
-            'person_id' => 1, // Ensure a person with ID 1 exists
-            'opening_time_id' => 1,
-            'lane_id' => 1,
-            'package_option_id' => 1,
-            'reservation_status_id' => 2, // 2 = 'confirmed'
+            'person_id' => $person->id,
+            'opening_time_id' => $openingTime->id ?? 1,
+            'lane_id' => $lane->id ?? 1,
+            'package_option_id' => $package->id ?? 1,
+            'reservation_status_id' => $status->id ?? 2,
             'date' => '2025-04-12',
             'start_time' => '14:00:00',
             'end_time' => '15:00:00',
@@ -38,20 +41,20 @@ class ReservationSeeder extends Seeder
             'is_active' => true,
         ]);
 
+        // Games aanmaken voor beide personen
         $game1 = Game::create([
             'reservation_id' => $reservation->id,
             'person_id' => $person->id,
-            'game_count' => 1, // <--- toegevoegd
+            'game_count' => 1,
         ]);
-        
+
         $game2 = Game::create([
             'reservation_id' => $reservation->id,
             'person_id' => $secondPerson->id,
-            'game_count' => 1, // <--- toegevoegd
+            'game_count' => 1,
         ]);
-        
 
-        // Scores koppelen aan de games
+        // Scores aan de games koppelen
         Score::create([
             'game_id' => $game1->id,
             'points' => 185,
