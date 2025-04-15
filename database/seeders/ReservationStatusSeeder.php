@@ -9,8 +9,8 @@ class ReservationStatusSeeder extends Seeder
 {
     public function run()
     {
-        ReservationStatus::create(['name' => 'pending']);
-        ReservationStatus::create(['name' => 'confirmed']);
-        ReservationStatus::create(['name' => 'canceled']);
+        ReservationStatus::create(['name' => 'Bevestigd']);
+        ReservationStatus::create(['name' => 'Geannuleerd']);
+        ReservationStatus::create(['name' => 'Inbehandeling']);
     }
 }
