@@ -8,29 +8,41 @@ use Illuminate\Database\Eloquent\Model;
 class Person extends Model
 {
     use HasFactory;
+    
+
+    protected $table = 'persons';
 
     protected $fillable = [
         'first_name',
+        'middle_name',
         'last_name',
-        'email',
-        'phone',
-        'address',
-        'date_of_birth',
-        'type_id', // This will link to TypePerson (customer/employee)
+        'nickname',
+        'is_adult',
+        'person_type_id',
     ];
 
-    public function type()
-    {
-        return $this->belongsTo(TypePerson::class, 'type_id');
-    }
-
+    // Relationships
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
     }
 
-    public function contact()
-    {
-        return $this->hasOne(Contact::class);
-    }
+// In Person.php model
+public function contact()
+{
+    return $this->hasOne(Contact::class);
 }
+
+
+    // Full name accessor
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+    
+    public function games()
+{
+    return $this->hasMany(Game::class);
+}
+}
+
