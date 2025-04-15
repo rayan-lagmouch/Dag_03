@@ -1,8 +1,40 @@
 {
+<<<<<<< HEAD
   "hash": "2bf06a5b",
   "configHash": "8ee90349",
   "lockfileHash": "6006632d",
   "browserHash": "42ce7403",
+=======
+  "hash": "ad89d533",
+  "configHash": "6f5e7bf2",
+  "lockfileHash": "6006632d",
+  "browserHash": "58b424a1",
+  "optimized": {
+    "alpinejs": {
+      "src": "../../node_modules/alpinejs/dist/module.esm.js",
+      "file": "alpinejs.js",
+      "fileHash": "3f423d29",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "397cd7a3",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-PZ5AY32C": {
+      "file": "chunk-PZ5AY32C.js"
+    }
+  }
+}
+{
+  "hash": "ad89d533",
+  "configHash": "6f5e7bf2",
+  "lockfileHash": "6006632d",
+  "browserHash": "e1b4ef7f",
+>>>>>>> c9b07abf331226143d4f9d22ddf3cd2a2766f06d
   "optimized": {},
   "chunks": {}
 }
