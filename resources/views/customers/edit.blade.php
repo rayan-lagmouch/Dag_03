@@ -3,12 +3,12 @@
 @section('content')
     <div class="max-w-7xl mx-auto px-4 py-6">
         <div class="bg-white p-6 rounded-xl shadow-md">
-            <h1 class="text-2xl font-bold mb-4">Wijzig Klant Gegevens</h1>
+            <h1 class="text-2xl font-bold mb-4">Edit Customer Details</h1>
 
             {{-- Display validation errors --}}
             @if($errors->any())
                 <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-                    <strong>Fout!</strong> Het e-mailadres is al in gebruik.
+                    <strong>Error!</strong> The email address is already in use.
                 </div>
             @endif
 
@@ -17,52 +17,52 @@
                 @csrf
                 @method('PUT')
 
-                {{-- Visible ID Field --}}
-                <div class="mb-4">
-                    <label for="id" class="block text-sm font-medium text-gray-700">Klant ID</label>
+                {{-- hidden ID Field --}}
+                <div hidden class="mb-4">
+                    <label for="id" class="block text-sm font-medium text-gray-700">Customer ID</label>
                     <input type="text" id="id" name="id" value="{{ old('id', $customer->id) }}" class="border rounded p-2 w-full">
                 </div>
 
                 <div class="mb-4">
-                    <label for="first_name" class="block text-sm font-medium text-gray-700">Voornaam</label>
+                    <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
                     <input type="text" id="first_name" name="first_name" value="{{ old('first_name', $customer->first_name) }}" class="border rounded p-2 w-full" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="middle_name" class="block text-sm font-medium text-gray-700">Tussenvoegsel</label>
+                    <label for="middle_name" class="block text-sm font-medium text-gray-700">Middle Name</label>
                     <input type="text" id="middle_name" name="middle_name" value="{{ old('middle_name', $customer->middle_name) }}" class="border rounded p-2 w-full">
                 </div>
 
                 <div class="mb-4">
-                    <label for="last_name" class="block text-sm font-medium text-gray-700">Achternaam</label>
+                    <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
                     <input type="text" id="last_name" name="last_name" value="{{ old('last_name', $customer->last_name) }}" class="border rounded p-2 w-full" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="nickname" class="block text-sm font-medium text-gray-700">Roepnaam</label>
+                    <label for="nickname" class="block text-sm font-medium text-gray-700">Nickname</label>
                     <input type="text" id="nickname" name="nickname" value="{{ old('nickname', $customer->nickname) }}" class="border rounded p-2 w-full">
                 </div>
 
                 <div class="mb-4">
-                    <label for="mobile" class="block text-sm font-medium text-gray-700">Mobiel</label>
+                    <label for="mobile" class="block text-sm font-medium text-gray-700">Mobile</label>
                     <input type="text" id="mobile" name="mobile" value="{{ old('mobile', optional($customer->contact)->mobile) }}" class="border rounded p-2 w-full">
                 </div>
 
                 <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">E-mailadres</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
                     <input type="email" id="email" name="email" value="{{ old('email', optional($customer->contact)->email) }}" class="border rounded p-2 w-full" required>
                 </div>
 
                 <div class="mb-4">
-                    <label for="is_adult" class="block text-sm font-medium text-gray-700">Volwassen</label>
+                    <label for="is_adult" class="block text-sm font-medium text-gray-700">Adult</label>
                     <select id="is_adult" name="is_adult" class="border rounded p-2 w-full">
-                        <option value="1" {{ $customer->is_adult ? 'selected' : '' }}>Ja</option>
-                        <option value="0" {{ !$customer->is_adult ? 'selected' : '' }}>Nee</option>
+                        <option value="1" {{ $customer->is_adult ? 'selected' : '' }}>Yes</option>
+                        <option value="0" {{ !$customer->is_adult ? 'selected' : '' }}>No</option>
                     </select>
                 </div>
 
                 <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Wijzigen
+                    Edit
                 </button>
             </form>
         </div>
